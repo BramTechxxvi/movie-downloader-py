@@ -13,7 +13,7 @@ def test_detect_provider_returns_youtube_for_youtube_url():
     
     
     
-def test_detect_provider_returns_youtube_for_youtube_hourt_url():
+def test_detect_provider_returns_youtube_for_youtube_short_url():
     url = "https://youtu.be/dQw4w9WgXcQ"
     result = detect_provider(url)
     
@@ -21,7 +21,7 @@ def test_detect_provider_returns_youtube_for_youtube_hourt_url():
     
     
     
-def test_detect_provider_returns_rednot_for_rednot_url():
+def test_detect_provider_returns_rednot_for_rednote_url():
     url = "https://www.rednote.com/explore/example"
     result = detect_provider(url)
     
