@@ -39,3 +39,22 @@ def detect_provider(url: str)-> str:
         return "protected"
     
     return "generic"
+
+
+
+def analyze_media(url: str)-> dict:
+    options = {
+        "quiet": True,
+        "no_warnings": True
+    }
+    with YoutubeDL(options) as ydl:
+        info = ydl.extract_info(url, download=False)
+        
+    return {
+        "id": info.get("id"),
+        "title": info.get("title"),
+        "thumbnail": info.get("thumbnail"),
+        "duration": info.get("duration"),
+        "uploader": info.get("uploader"),
+        "formats": info.get("formats", [])
+    }
