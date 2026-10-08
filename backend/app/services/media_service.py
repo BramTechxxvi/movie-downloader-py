@@ -68,3 +68,19 @@ def normalize_formats(formats: list[dict])->list[dict]:
         vcodec = media_format.get("vcodec")
         acodec = media_format.get("acodec")
         height = media_format.get("height")
+        
+        if vcodec != "none":
+            media_type = "video"
+            resolution = f"{height}p" if height else None
+        elif acodec != "none":
+            media_type = "audio"
+            resolution = None
+        else:
+            continue
+        
+        normalized.append({
+            "format_id": media_format.get("format_id"),
+            "type": media_type,
+            "resolution": resolution,
+            "extension": media_format.get("ext")
+        })
