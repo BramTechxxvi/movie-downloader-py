@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 
-@router.post("analyze", response_model=AnalyzeMediaResponse)
+@router.post("/analyze", response_model=AnalyzeMediaResponse)
 def analyze_media(request: AnalyzeMediaRequest,)-> AnalyzeMediaResponse:
-    provider = detect_provider(request)
+    provider = detect_provider(str(request.url))
     return AnalyzeMediaResponse(provider=provider)

@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+from app.api.routes.media import router as media_router
+
+
 
 
 app = FastAPI(
@@ -14,3 +17,7 @@ def health_check():
         "status": "OK",
         "service": "Multimedia Downloader"
     }
+    
+    
+
+app.include_router(media_router)
