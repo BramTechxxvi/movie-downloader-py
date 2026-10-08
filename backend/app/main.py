@@ -5,7 +5,6 @@ app = FastAPI(
     title="Multiledia Downloader",
     description="",
     version= "1.0.0",
-
 )
 
 
