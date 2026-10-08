@@ -56,7 +56,7 @@ def analyze_media(url: str)-> dict:
         "thumbnail": info.get("thumbnail"),
         "duration": info.get("duration"),
         "uploader": info.get("uploader"),
-        "formats": info.get("formats", [])
+        "formats": normalize_formats(info.get("formats", []))
     }
     
     
@@ -84,3 +84,5 @@ def normalize_formats(formats: list[dict])->list[dict]:
             "resolution": resolution,
             "extension": media_format.get("ext")
         })
+    
+    return normalized

@@ -51,13 +51,13 @@ def test_normalize_formats_returns_clean_format_data():
         {
             "format_id": "137",
             "type": "video",
-            "resolution": 1080,
-            "extention": "mp4",
+            "resolution": "1080p",
+            "extension": "mp4",
         },
         {
             "format_id": "140",
             "type": "audio",
-            "resolution": "none",
-            "extention": "m4a"
+            "resolution": None,
+            "extension": "m4a"
         }
     ]
