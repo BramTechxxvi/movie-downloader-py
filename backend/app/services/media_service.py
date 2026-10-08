@@ -58,3 +58,13 @@ def analyze_media(url: str)-> dict:
         "uploader": info.get("uploader"),
         "formats": info.get("formats", [])
     }
+    
+    
+    
+
+def normalize_formats(formats: list[dict])->list[dict]:
+    normalized = []
+    for media_format in formats:
+        vcodec = media_format.get("vcodec")
+        acodec = media_format.get("acodec")
+        height = media_format.get("height")
