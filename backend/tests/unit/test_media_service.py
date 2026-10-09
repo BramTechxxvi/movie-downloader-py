@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 from app.services.media_service import analyze_media, normalize_formats
 import pytest
+from yt_dlp.utils import DownloadError
 
 
 
@@ -70,3 +71,16 @@ def test_analyze_media_rejects_protected_provider():
     url = "https://www.disneyplus.com/movies/example"
     with pytest.raises(ValueError, match="Protected media provider"):
         analyze_media(url)
+        
+        
+        
+        
+        
+@patch("app.services.media_service.YoutubeDL")
+def test_analyze_media_raises_value_error_when_extraction_fails(mock_youtube_dl):
+    mock_ydl = MagicMock()
+    mock_ydl.extract_info.side_effect = DownloadError("Unable to extract media")
+    
+    mock_youtube_dl.return_value.__enter__.return_value = mock_ydl
+    with pytest.raises(ValueError, match="Unable to analyze media"):
+        analyze_media("https://www.youtube.com/watch?v=invalid")

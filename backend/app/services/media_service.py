@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 from yt_dlp import YoutubeDL
+from yt_dlp.utils import DownloadError
 
 
 
@@ -51,8 +52,11 @@ def analyze_media(url: str)-> dict:
         "quiet": True,
         "no_warnings": True
     }
-    with YoutubeDL(options) as ydl:
-        info = ydl.extract_info(url, download=False)
+    try:
+        with YoutubeDL(options) as ydl:
+            info = ydl.extract_info(url, download=False)
+    except DownloadError as error:
+        raise ValueError("Unable to analyze media")
         
     return {
         "provider": provider,
