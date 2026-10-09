@@ -7,7 +7,7 @@ from unittest.mock import patch
 client = TestClient(app)
 
 
-@patch("app.api.routes.media_routes.analyze_media_route")
+@patch("app.api.routes.media_routes.analyze_media")
 def test_analyze_media_returns_metadata(mock_analyze_media):
     mock_analyze_media.return_value = {
         "provider": "youtube",
@@ -71,7 +71,7 @@ def test_analyze_media_rejects_protected_provider():
     
     
 
-@patch("app.api.routes.media_routes.analyze_media_route")
+@patch("app.api.routes.media_routes.analyze_media")
 def test_analyze_media_returns_400_when_extraction_fails(mock_analyze_media):
     mock_analyze_media.side_effect = ValueError("Unable to analyze media")
     response = client.post(
