@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api.routes.media import router as media_router
+from app.api.routes.media_routes import router as media_router
 
 
 

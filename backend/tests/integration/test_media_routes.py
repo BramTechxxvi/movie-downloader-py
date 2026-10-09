@@ -7,11 +7,11 @@ from unittest.mock import patch
 client = TestClient(app)
 
 
-@patch("app.api.routes.media.analyze_media")
+@patch("app.api.routes.media_routes.analyze_media_route")
 def test_analyze_media_returns_metadata(mock_analyze_media):
     mock_analyze_media.return_value = {
         "provider": "youtube",
-        "id": "abc123",
+        "id": "abc12345",
         "title": "Example Video",
         "thumbnail": "https://example.com/thumb.jpeg",
         "duration": 120,
@@ -27,12 +27,12 @@ def test_analyze_media_returns_metadata(mock_analyze_media):
     }
     response = client.post(
         "/api/v1/media/analyze", 
-        json={ "url": "https://www.youtube.com/watch?v=abc123" }
+        json={ "url": "https://www.youtube.com/watch?v=abc12345" }
     )
     assert response.status_code == 200
     assert response.json() == {
         "provider": "youtube",
-        "id": "abc123",
+        "id": "abc12345",
         "title": "Example Video",
         "thumbnail": "https://example.com/thumb.jpeg",
         "duration": 120,
@@ -70,3 +70,12 @@ def test_analyze_media_rejects_protected_provider():
     
     
     
+
+@patch("app.api.routes.media_routes.analyze_media_route")
+def test_analyze_media_returns_400_when_extraction_fails(mock_analyze_media):
+    mock_analyze_media.side_effect = ValueError("Unable to analyze media")
+    response = client.post(
+        "/api/v1/media/analyze",
+        json={ "url": "https://www.youtube.com/watch?v=invalid"}
+    )
+    assert response.json() == { "detail": "Unable to analyze media"}
