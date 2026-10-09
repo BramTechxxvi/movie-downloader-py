@@ -58,3 +58,15 @@ def test_analyze_media_rejects_invalid_url():
     
     
     
+    
+
+def test_analyze_media_rejects_protected_provider():
+    response = client.post(
+        "/api/v1/media/analyze",
+        json={ "url": "https://www.disneyplus.com/movies/example" }
+    )
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Protected media provider"}
+    
+    
+    
