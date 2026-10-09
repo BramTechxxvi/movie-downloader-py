@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock, patch
-from app.services.media_service import analyze_media, normalize_formats
+from app.services.media_service import analyze_media_route, normalize_formats
 import pytest
 
 
@@ -18,7 +18,7 @@ def test_analyze_media_returns_video_metatdata(mock_youtube_dl):
         "formats": [],
     }
     mock_youtube_dl.return_value.__enter__.return_value = mock_ydl
-    result = analyze_media("https://www.youtube.com/watch?v=abc123")
+    result = analyze_media_route("https://www.youtube.com/watch?v=abc123")
     
     assert result["provider"] == "youtube"
     assert result["id"] == "abc123"
@@ -69,4 +69,4 @@ def test_normalize_formats_returns_clean_format_data():
 def test_analyze_media_rejects_protected_provider():
     url = "https://www.disneyplus.com/movies/example"
     with pytest.raises(ValueError, match="Protected media provider"):
-        analyze_media(url)
+        analyze_media_route(url)

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.schemas.media import AnalyzeMediaRequest, AnalyzeMediaResponse
-from app.services.media_service import detect_provider, analyze_media
+from app.services.media_service import analyze_media
 
 
 
@@ -12,6 +12,6 @@ router = APIRouter(
 
 
 @router.post("/analyze", response_model=AnalyzeMediaResponse)
-def analyze_media(request: AnalyzeMediaRequest,)-> AnalyzeMediaResponse:
+def analyze_media_route(request: AnalyzeMediaRequest,)-> AnalyzeMediaResponse:
     metadata = analyze_media(str(request.url))
     return AnalyzeMediaResponse(**metadata)
