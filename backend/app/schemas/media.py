@@ -24,5 +24,5 @@ class AnalyzeMediaResponse(BaseModel):
     thumbnail: str |None=None
     duration: int | float |None=None
     uploader: str |None=None
-    format: list[MediaFormat]
+    formats: list[MediaFormat]
     

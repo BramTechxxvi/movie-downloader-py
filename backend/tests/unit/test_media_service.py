@@ -20,6 +20,7 @@ def test_analyze_media_returns_video_metatdata(mock_youtube_dl):
     mock_youtube_dl.return_value.__enter__.return_value = mock_ydl
     result = analyze_media("https://www.youtube.com/watch?v=abc123")
     
+    assert result["provider"] == "youtube"
     assert result["id"] == "abc123"
     assert result["title"] == "Example Video"
     assert result["thumbnail"] == "https://example.com/thumb.jnp"

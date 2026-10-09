@@ -10,11 +10,12 @@ client = TestClient(app)
 @patch("app.api.routes.media.analyze_media")
 def test_analyze_media_returns_metadata(mock_analyze_media):
     mock_analyze_media.return_value = {
+        "provider": "youtube",
         "id": "abc123",
         "title": "Example Video",
         "thumbnail": "https://example.com/thumb.jpeg",
         "duration": 120,
-        "uploader": "Example ChannelX",
+        "uploader": "Example Channel",
         "formats": [
             {
                 "format_id": "137",
