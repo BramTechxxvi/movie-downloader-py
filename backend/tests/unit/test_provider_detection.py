@@ -46,7 +46,7 @@ def test_detect_provider_returns_protected_for_hulu():
     
     
     
-def test_detect_provider_reurns_generic_for_other_urls():
+def test_detect_provider_rveurns_generic_for_other_urls():
     url = "https://vimeo.com/123456789"
     result = detect_provider(url)
     
