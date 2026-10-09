@@ -44,11 +44,13 @@ def detect_provider(url: str)-> str:
 
 def analyze_media(url: str)-> dict:
     provider = detect_provider(url)
+    if provider == "protected":
+        raise ValueError("Protected media provider")
+    
     options = {
         "quiet": True,
         "no_warnings": True
     }
-    
     with YoutubeDL(options) as ydl:
         info = ydl.extract_info(url, download=False)
         

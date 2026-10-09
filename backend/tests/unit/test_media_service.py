@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
 from app.services.media_service import analyze_media, normalize_formats
-
+import pytest
 
 
 
@@ -62,3 +62,11 @@ def test_normalize_formats_returns_clean_format_data():
             "extension": "m4a"
         }
     ]
+    
+    
+    
+    
+def test_analyze_media_rejects_protected_provider():
+    url = "https://www.disneyplus.com/movies/example"
+    with pytest.raises(ValueError, match="Protected media provider"):
+        analyze_media(url)
