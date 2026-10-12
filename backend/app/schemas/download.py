@@ -12,3 +12,5 @@ class DownloadMediaRequest(BaseModel):
     
 class DownloadMediaResponse(BaseModel):
     status: str
+    filename: str
+    filepath: str
