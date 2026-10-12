@@ -1,5 +1,6 @@
 from yt_dlp import YoutubeDL
 from pathlib import Path
+from yt_dlp.utils import DownloadError
 
 
 
@@ -19,8 +20,12 @@ def download_media(url: str, format_id: str)->dict:
         "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s")
     }
     
-    with YoutubeDL(options) as ydl:
-        info = ydl.extract_info(url, download=True)
+    try:
+        with YoutubeDL(options) as ydl:
+            info = ydl.extract_info(url, download=True)
+    except DownloadError as error:
+        raise ValueError("Unable to download media", error)
+    
     requested_downloads = info.get("requested_downloads", [])
     
     if requested_downloads:
