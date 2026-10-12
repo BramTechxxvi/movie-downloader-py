@@ -39,7 +39,7 @@ def test_download_media_saves_file_to_download_directory(mock_youtube_dl):
         "title": "Example Video",
         "ext": "mp4",
         "requested_downloads": [
-            { "filpath": "downloads/Example Video.mp4"}
+            { "filepath": "downloads/Example Video.mp4"}
         ]
     }
     mock_youtube_dl.return_value.__enter__.return_value = mock_ydl
@@ -59,11 +59,11 @@ def test_download_media_saves_file_to_download_directory(mock_youtube_dl):
     
     
 @patch("app.services.download_service.YoutubeDL")
-def test_download_media_raises_value_error_when_dowbload_fails(mock_youtube_dl):
+def test_download_media_raises_value_error_when_download_fails(mock_youtube_dl):
     mock_ydl = MagicMock()
-    mock_ydl._extract_info.side_effect = DownloadError("Download failed")
+    mock_ydl.extract_info.side_effect = DownloadError("Download failed")
     
-    mock_youtube_dl.return_value.__enter__return_value = mock_ydl
+    mock_youtube_dl.return_value.__enter__.return_value = mock_ydl
     with pytest.raises(ValueError, match="Unable to download media"):
         download_media(
             url="https://www.youtube.com/watch?v=abc123",
