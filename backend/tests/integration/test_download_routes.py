@@ -24,8 +24,25 @@ def test_download_media_returns_completed_status(mock_download_media):
         }
     )
     assert response.status_code == 200
-    # assert response.json() == {"status": "completed"}
-    
+    assert response.json()["status"] == "completed"
+
+
+
+
+
+@patch("app.api.routes.download_routes.download_media")
+def test_download_media_returns_400_when_download_fails(mock_download_media):
+    mock_download_media.side_effect = ValueError("Unable to download media")
+    response = client.post(
+        "/ap1/v1/downloads",
+        json={
+            "url": "https://www.youtube.com/watch?v=abc123",
+            "format_id": "137"
+        }
+    )
+    assert response.status_code == 400
+    assert response.json() == { "details": "Unable to download media"}
+       
     
     
     
