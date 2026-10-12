@@ -20,7 +20,7 @@ def download_media(url: str, format_id: str)->dict:
     }
     
     with YoutubeDL(options) as ydl:
-        info = ydl.exract(url, download=True)
+        info = ydl.extract_info(url, download=True)
     requested_downloads = info.get("requested_downloads", [])
     
     if requested_downloads:
@@ -31,6 +31,6 @@ def download_media(url: str, format_id: str)->dict:
     path = Path(filepath)
     return {
         "status": "completed",
-        "filename": "",
+        "filename": path.name,
         "filepath": str(path)
     }
