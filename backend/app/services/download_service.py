@@ -15,9 +15,10 @@ DOWNLOAD_DIR = Path("downloads")
 def download_media(url: str, format_id: str)->dict:
     DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     options = {
-        "format": format_id, 
+        "format": f"{format_id}+bestaudio/best", 
         "quiet": True,
-        "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s")
+        "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s"),
+        "merge_output_format": "mp4"
     }
     
     try:
