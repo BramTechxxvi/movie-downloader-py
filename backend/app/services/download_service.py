@@ -25,7 +25,7 @@ def download_media(url: str, format_id: str, media_type: str)->dict:
         "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s")
     }
     if media_type =="video":
-        options["merge_outpur_format"] = "mp4"
+        options["merge_output_format"] = "mp4"
     
     try:
         with YoutubeDL(options) as ydl:

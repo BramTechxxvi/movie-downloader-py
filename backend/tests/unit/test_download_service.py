@@ -104,7 +104,7 @@ def test_download_media_uses_selected_video_and_best_audio(mock_youtube_ydl):
     
     
     
-@patch("app.services.download_sevice.YoutubeDL")
+@patch("app.services.download_service.YoutubeDL")
 def test_uses_selected_audio_format(mock_youtube_dl):
     mock_ydl = MagicMock()
     mock_ydl.extract_info.return_value = {
