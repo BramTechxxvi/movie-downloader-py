@@ -34,14 +34,14 @@ def test_download_media_returns_completed_status(mock_download_media):
 def test_download_media_returns_400_when_download_fails(mock_download_media):
     mock_download_media.side_effect = ValueError("Unable to download media")
     response = client.post(
-        "/ap1/v1/downloads",
+        "/api/v1/downloads",
         json={
             "url": "https://www.youtube.com/watch?v=abc123",
             "format_id": "137"
         }
     )
     assert response.status_code == 400
-    assert response.json() == { "details": "Unable to download media"}
+    assert response.json() == { "detail": "Unable to download media"}
        
     
     
