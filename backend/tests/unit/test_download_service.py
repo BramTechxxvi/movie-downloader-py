@@ -23,7 +23,8 @@ def test_download_media_downloads_selected_format(mock_youtube_dl):
     
     result = download_media(
         url="https://www.youtube.com/watch?v=abc123",
-        format_id="137"
+        format_id="137",
+        media_type="video"
     )
     mock_ydl.extract_info.assert_called_once_with("https://www.youtube.com/watch?v=abc123", download=True)
     assert result["status"] == "completed"
@@ -45,7 +46,8 @@ def test_download_media_saves_file_to_download_directory(mock_youtube_dl):
     mock_youtube_dl.return_value.__enter__.return_value = mock_ydl
     result = download_media(
         url="https://www.youtube.com/watch?v=abc123",
-        format_id= "abc123"
+        format_id= "abc123",
+        media_type="video"
     )
     
     assert result == {
@@ -67,7 +69,8 @@ def test_download_media_raises_value_error_when_download_fails(mock_youtube_dl):
     with pytest.raises(ValueError, match="Unable to download media"):
         download_media(
             url="https://www.youtube.com/watch?v=abc123",
-            format_id="137"
+            format_id="137",
+            media_type="video"
         )
         
         
@@ -87,7 +90,11 @@ def test_download_media_uses_selected_video_and_best_audio(mock_youtube_ydl):
         ]
     }
     mock_youtube_ydl.return_value.__enter__.return_value = mock_ydl
-    download_media(url="https://www.youtube.com/watch?v=abc123", format_id="137")
+    download_media(
+        url="https://www.youtube.com/watch?v=abc123", 
+        format_id="137",
+        media_type="video"
+    )
     options = mock_youtube_ydl.call_args.args[0]
     
     assert options["format"] == "137+bestaudio/best"
