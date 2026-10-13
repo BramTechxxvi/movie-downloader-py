@@ -6,7 +6,7 @@ from app.api.routes.download_routes import router as download_router
 
 
 app = FastAPI(
-    title="Multiledia Downloader",
+    title="Multimedia Downloader",
     description="",
     version= "1.0.0",
 )
