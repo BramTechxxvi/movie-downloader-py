@@ -1,4 +1,5 @@
 from pydantic import BaseModel, HttpUrl
+from typing import Literal
 
 
 
@@ -6,6 +7,7 @@ from pydantic import BaseModel, HttpUrl
 class DownloadMediaRequest(BaseModel):
     url: HttpUrl
     format_id: str
+    media_type: Literal["video", "audio"]
     
     
     
