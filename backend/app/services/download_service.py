@@ -12,14 +12,20 @@ DOWNLOAD_DIR = Path("downloads")
 
 
 
-def download_media(url: str, format_id: str)->dict:
+def download_media(url: str, format_id: str, media_type: str)->dict:
     DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    if media_type == "video":
+        selected_format = f"{format_id}+bestaudio/best"
+    else:
+        selected_format = format_id
+        
     options = {
-        "format": f"{format_id}+bestaudio/best", 
+        "format": selected_format,
         "quiet": True,
-        "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s"),
-        "merge_output_format": "mp4"
+        "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s")
     }
+    if media_type =="video":
+        options["merge_outpur_format"] = "mp4"
     
     try:
         with YoutubeDL(options) as ydl:

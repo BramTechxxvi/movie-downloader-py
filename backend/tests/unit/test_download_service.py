@@ -76,7 +76,7 @@ def test_download_media_raises_value_error_when_download_fails(mock_youtube_dl):
 @patch("app.services.download_service.YoutubeDL")
 def test_download_media_uses_selected_video_and_best_audio(mock_youtube_ydl):
     mock_ydl = MagicMock()
-    mock_youtube_ydl.extract_info.return_value = {
+    mock_ydl.extract_info.return_value = {
         "id": "abc123",
         "title": "Example Video",
         "ext": "mp4",
@@ -93,3 +93,28 @@ def test_download_media_uses_selected_video_and_best_audio(mock_youtube_ydl):
     assert options["format"] == "137+bestaudio/best"
     assert options["merge_output_format"]== "mp4"
     
+    
+    
+    
+    
+@patch("app.services.download_sevice.YoutubeDL")
+def test_uses_selected_audio_format(mock_youtube_dl):
+    mock_ydl = MagicMock()
+    mock_ydl.extract_info.return_value = {
+        "id": "abc123",
+        "title": "Example audio",
+        "ext": "m4a",
+        "requested_downloads": [
+            {
+                "filepath": "downloads/Example Audio.m4a"
+            }
+        ]
+    }
+    mock_youtube_dl.return_value.__enter__.return_value = mock_ydl
+    download_media(
+        url= "https://www.youtube.com/watch?v=abc123",
+        format_id="140",
+        media_type="audio"
+    )
+    options = mock_youtube_dl.call_args.args[0]
+    assert options["format"] =="140"
