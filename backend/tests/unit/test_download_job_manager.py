@@ -23,3 +23,11 @@ def test_get_job_returns_existing_job():
     
     retrieved_job = manager.get_job(created_job.download_id)
     assert retrieved_job == created_job
+    
+    
+    
+    
+def test_get_job_returns_none_when_job_does_not_exist():
+    manager = DownloadJobManager()
+    result = manager.get_job("not-existing-job")
+    assert result is None
