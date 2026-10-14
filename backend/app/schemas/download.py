@@ -8,7 +8,7 @@ class DownloadMediaRequest(BaseModel):
     url: HttpUrl
     format_id: str
     media_type: Literal["video", "audio"]
-    
+    audio_format: Literal["original", "mp3"] = "original"
     
     
     
