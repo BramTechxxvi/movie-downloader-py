@@ -13,3 +13,13 @@ def test_create_job_returns_pending_download_job():
     assert job.download_id is not None
     assert job.status == DownloadStatus.PENDING
     assert job.progress == 0.0
+    
+    
+    
+    
+def test_get_job_returns_existing_job():
+    manager = DownloadJobManager()
+    created_job = manager.create_job()
+    
+    retrieved_job = manager.get_job(created_job.download_id)
+    assert retrieved_job == created_job
