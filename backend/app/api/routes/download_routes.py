@@ -19,7 +19,8 @@ def download_route(request: DownloadMediaRequest)-> DownloadMediaResponse:
         result = download_media(
             url=str(request.url), 
             format_id=request.format_id,
-            media_type=request.media_type
+            media_type=request.media_type,
+            audio_format=request.audio_format
         )
         return DownloadMediaResponse(**result)
     except  ValueError as error:
