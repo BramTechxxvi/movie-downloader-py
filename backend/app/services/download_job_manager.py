@@ -61,4 +61,12 @@ class DownloadJobManager:
     
         
         
+    def fail_job(self, download_id: str, error: str)-> DownloadJOb |None:
+        job = self.get_job(download_id)
+        if job is None:
+            return None
         
+        job.status = DownloadStatus.FAILED
+        job.error = error
+        
+        return job 
