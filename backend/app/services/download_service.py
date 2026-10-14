@@ -12,7 +12,10 @@ DOWNLOAD_DIR = Path("downloads")
 
 
 
-def download_media(url: str, format_id: str, media_type: str)->dict:
+def download_media(
+    url: str, format_id: str, 
+    media_type: str, audio_format: str = "original")-> dict:
+    
     DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     if media_type == "video":
         selected_format = f"{format_id}+bestaudio/best"
@@ -24,8 +27,18 @@ def download_media(url: str, format_id: str, media_type: str)->dict:
         "quiet": True,
         "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s")
     }
+    
     if media_type =="video":
         options["merge_output_format"] = "mp4"
+    
+    if media_type == "audio" and audio_format == "mp3":
+        options["postprocessors"] = [
+            {
+                "key": "FFmpegExtractAudio",
+                "preferredcodec": "mp3",
+                "preferredquality": "192"
+            }
+        ]
     
     try:
         with YoutubeDL(options) as ydl:

@@ -125,3 +125,37 @@ def test_uses_selected_audio_format(mock_youtube_dl):
     )
     options = mock_youtube_dl.call_args.args[0]
     assert options["format"] =="140"
+    
+    
+    
+
+
+@patch("app.services.download_service.YoutubeDL")
+def test_download_media_converts_audio_to_mp3(mock_youtube_dl):
+    mock_ydl = MagicMock()
+    mock_ydl.extract_info.return_value ={
+        "id": "abc13",
+        "title": "Example Audio",
+        "ext": "mp3",
+        "requested_downloads": [
+            { "filepath": "download/Example Audio.mp3" }
+        ]
+    }
+    mock_youtube_dl.return_value.__enter__.return_value = mock_ydl
+    download_media(
+        url= "https://www.youtube.com/watch?v=abc123",
+        format_id="140",
+        media_type="audio",
+        audio_format="mp3"
+    )
+    options = mock_youtube_dl.call_args.args[0]
+    
+    assert options["format"] == "140"
+    assert options["postprocessors"] == [
+        {
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "192"
+        }
+    ]
+        
