@@ -20,7 +20,8 @@ def test_download_media_returns_completed_status(mock_download_media):
         "/api/v1/downloads",
         json= { 
             "url": "https://www.youtube.com/watch?v=abc123", 
-            "format_id": "137"
+            "format_id": "137",
+            "media_type": "video"
         }
     )
     assert response.status_code == 200
@@ -37,7 +38,8 @@ def test_download_media_returns_400_when_download_fails(mock_download_media):
         "/api/v1/downloads",
         json={
             "url": "https://www.youtube.com/watch?v=abc123",
-            "format_id": "137"
+            "format_id": "137",
+            "media_type": "video"
         }
     )
     assert response.status_code == 400
