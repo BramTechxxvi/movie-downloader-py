@@ -63,3 +63,17 @@ def test_complete_job_marks_job_as_completed():
     assert completed_job.progress == 100.0
     assert completed_job.filename == "Example Video.mp4"
     assert completed_job.filepath == "downloads/Example Video.mp4"
+    
+    
+    
+    
+    
+def test_fail_job_marks_job_as_failed():
+    manager = DownloadJobManager()
+    job = manager.create_job()
+    
+    failed_job = manager.fail_job(job.download_id, "Unable to download media")
+    assert failed_job is not None
+    
+    assert failed_job.status == DownloadStatus.FAILED
+    assert failed_job.error == "Unable to download media"
