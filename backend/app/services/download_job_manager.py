@@ -37,3 +37,28 @@ class DownloadJobManager:
         job.progress = progress
         
         return job
+    
+    
+    
+    
+    def complete_job(
+        self, download_id: str, 
+        filename: str, filepath: str )-> DownloadJOb |None:
+        
+        job = self.get_job(download_id)
+        if job is None:
+            return None
+        
+        job.status = DownloadStatus.COMPLETED
+        job.progress = 100.0
+        job.filename = filename
+        job.filepath = filepath
+        job.error = None
+        
+        return job
+    
+    
+    
+        
+        
+        
