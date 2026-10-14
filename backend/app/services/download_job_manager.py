@@ -25,3 +25,15 @@ class DownloadJobManager:
     
     def get_job(self, download_id: str) -> DownloadJOb | None:
         return self._jobs.get(download_id)
+    
+    
+    
+    def update_progress(self, download_id: str, progress: float) -> DownloadJOb |None:
+        job = self.get_job(download_id)
+        if job is None:
+            return None
+        
+        job.status = DownloadStatus.DOWNLOADING
+        job.progress = progress
+        
+        return job
