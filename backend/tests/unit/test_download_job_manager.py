@@ -31,3 +31,16 @@ def test_get_job_returns_none_when_job_does_not_exist():
     manager = DownloadJobManager()
     result = manager.get_job("not-existing-job")
     assert result is None
+    
+    
+    
+    
+def test_update_progress_changes_progress_and_status():
+    manager = DownloadJobManager()
+    job = manager.create_job()
+    
+    updated_job = manager.update_progress(job.download_id, 42.5)
+    assert updated_job is not None
+    
+    assert updated_job.progress == 42.5
+    assert updated_job.status == DownloadStatus.DOWNLOADING
