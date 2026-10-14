@@ -44,3 +44,22 @@ def test_update_progress_changes_progress_and_status():
     
     assert updated_job.progress == 42.5
     assert updated_job.status == DownloadStatus.DOWNLOADING
+    
+    
+    
+    
+    
+def test_complete_job_marks_job_as_completed():
+    manager = DownloadJobManager()
+    job = manager.create_job()
+    
+    completed_job = manager.complete_job(
+        download_id= job.download_id,
+        filename= "Example Video.mp4",
+        filepath= "downloads/Example Video.mp4"
+    )
+    assert completed_job is not None
+    assert completed_job.status == DownloadStatus.COMPLETED
+    assert completed_job.progress == 100.0
+    assert completed_job.filename == "Example Video.mp4"
+    assert completed_job.filepath == "downloads/Example Video.mp4"
