@@ -23,4 +23,5 @@ class DownloadJobManager:
     
     
     
-        
+    def get_job(self, download_id: str) -> DownloadJOb | None:
+        return self._jobs.get(download_id)
