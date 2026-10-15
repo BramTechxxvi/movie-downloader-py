@@ -49,4 +49,5 @@ def test_download_media_returns_400_when_download_fails(mock_download_media):
     
     
     
-# @patch
+def test_get_download_status_returns_existing_job():
+    job = download
