@@ -57,7 +57,7 @@ def test_get_download_status_returns_existing_job():
     
     assert response.status_code == 200
     assert response.json()["download_id"] == job.download_id
-    assert response.json()["status"] == "downloding"
+    assert response.json()["status"] == "downloading"
     assert response.json()["progress"] == 35.5
     
     
@@ -66,3 +66,28 @@ def test_get_download_status_returns_existing_job():
 def test_get_download_status_returns_404_when_job_does_not_exist():
     response = client.get("/api/v1/downloads/does-not-exist")
     assert response.status_code == 404
+    
+    
+    
+    
+
+@patch("app.api.routes.download_routes.start_download")    
+def test_start_download_reurns_download_id(mock_start_download):
+    mock_start_download.return_value = {
+        "download_id": "download-123",
+        "status": "pending"
+    }
+    response = client.post(
+        "/api/v1/downloads",
+        json={
+            "url": "https://youtube.com/watch?v=abc123",
+            "format_id": "137",
+            "media_type": "video",
+            "audio_format":"original"
+        }
+    )
+    assert response.status_code == 202
+    assert response.json() == {
+        "download_id": "download-123",
+        "status": "pending"
+    }
