@@ -1,6 +1,9 @@
 from fastapi import APIRouter, HTTPException
-from app.schemas.download import DownloadMediaRequest, DownloadMediaResponse
+from app.schemas.download import (
+    DownloadMediaRequest, DownloadMediaResponse, DownloadStatusResponse
+    )
 from app.services.download_service import download_media
+from app.services.download_job_manager import download_job_manager
 
 
 
@@ -25,3 +28,21 @@ def download_route(request: DownloadMediaRequest)-> DownloadMediaResponse:
         return DownloadMediaResponse(**result)
     except  ValueError as error:
         raise HTTPException(status_code=400, detail=str(error))
+    
+    
+    
+    
+
+@router.get("/{download_id}", response_model=DownloadStatusResponse)
+def get_download_status(download_id: str) -> DownloadStatusResponse:
+    job = download_job_manager.get_job(download_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Download not found")
+    
+    return DownloadStatusResponse(
+        download_id=job.download_id,
+        status=job.status,
+        progress=job.progress,
+        filename=job.filename,
+        error= job.error
+    )

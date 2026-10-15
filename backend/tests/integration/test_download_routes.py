@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 from app.main import app
 from unittest.mock import patch
+from app.services.download_job_manager import download_job_manager
 
 
 
@@ -50,4 +51,18 @@ def test_download_media_returns_400_when_download_fails(mock_download_media):
     
     
 def test_get_download_status_returns_existing_job():
-    job = download
+    job = download_job_manager.create_job()
+    download_job_manager.update_progress(job.download_id, 35.5)
+    response = client.get(f"/api/v1/downloads/{job.download_id}")
+    
+    assert response.status_code == 200
+    assert response.json()["download_id"] == job.download_id
+    assert response.json()["status"] == "downloding"
+    assert response.json()["progress"] == 35.5
+    
+    
+    
+
+def test_get_download_status_returns_404_when_job_does_not_exist():
+    response = client.get("/api/v1/downloads/does-not-exist")
+    assert response.status_code == 404
