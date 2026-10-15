@@ -13,8 +13,8 @@ DOWNLOAD_DIR = Path("downloads")
 
 
 def download_media(
-    url: str, format_id: str, 
-    media_type: str, audio_format: str = "original")-> dict:
+    url: str, format_id: str, media_type: str, 
+    audio_format: str = "original", progress_hook=None)-> dict:
     
     DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     if media_type == "video":
@@ -27,6 +27,9 @@ def download_media(
         "quiet": True,
         "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s")
     }
+    
+    if progress_hook is not None:
+        options["progress_hooks"] = [progress_hook]
     
     if media_type =="video":
         options["merge_output_format"] = "mp4"
