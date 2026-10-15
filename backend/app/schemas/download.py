@@ -16,3 +16,13 @@ class DownloadMediaResponse(BaseModel):
     status: str
     filename: str
     filepath: str
+    
+    
+    
+    
+class DownloadStatusResponse(BaseModel):
+    download_id: str
+    status: str
+    progress: float
+    filename: str|None = None
+    error: str |None=None
