@@ -26,3 +26,11 @@ class DownloadStatusResponse(BaseModel):
     progress: float
     filename: str|None = None
     error: str |None=None
+    
+    
+    
+    
+    
+class StartDownloadResponse:
+    download_id: str
+    status: str
