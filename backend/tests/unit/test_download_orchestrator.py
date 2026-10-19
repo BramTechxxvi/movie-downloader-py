@@ -15,7 +15,7 @@ def test_start_download_creates_pending_job():
     
     manager.create_job.assert_called_once()
     assert result  == {
-        "download_id": "dowload-123",
+        "download_id": "download-123",
         "status": "pending"
     }
     
