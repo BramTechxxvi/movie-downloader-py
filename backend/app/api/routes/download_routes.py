@@ -4,7 +4,7 @@ from app.schemas.download import (
     DownloadStatusResponse, StartDownloadResponse
     )
 from app.services.download_orchestrator import download_orchestrator
-# from app.services.download_job_manager import download_job_manager
+from app.services.download_job_manager import download_job_manager
 
 
 
@@ -17,18 +17,22 @@ router = APIRouter(
 
 
 
-@router.post("", response_model=DownloadMediaResponse)
-def download_route(request: DownloadMediaRequest)-> DownloadMediaResponse:
-    try:
-        result = download_media(
-            url=str(request.url), 
-            format_id=request.format_id,
-            media_type=request.media_type,
-            audio_format=request.audio_format
-        )
-        return DownloadMediaResponse(**result)
-    except  ValueError as error:
-        raise HTTPException(status_code=400, detail=str(error))
+@router.post("", response_model=StartDownloadResponse, 
+            status_code=status.HTTP_202_ACCEPTED)
+def download_route(request: DownloadMediaRequest,
+    background_tasks: BackgroundTasks)-> StartDownloadResponse:
+    
+    job = download_orchestrator.create_download()
+    background_tasks.add_task(
+        download_orchestrator.execute_download,
+        download_id=job["download_id"],
+        url=str[request.url],
+        format_id=request.format_id,
+        media_type=request.media_type,
+        audio_format=request.audio_format,
+        
+    )
+    return DownloadMediaResponse(**job)
     
     
     
