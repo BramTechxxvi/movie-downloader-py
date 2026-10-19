@@ -72,7 +72,7 @@ def test_get_download_status_returns_404_when_job_does_not_exist():
     
 
 @patch("app.api.routes.download_routes.start_download")    
-def test_start_download_reurns_download_id(mock_start_download):
+def test_start_download_returns_download_id(mock_start_download):
     mock_start_download.return_value = {
         "download_id": "download-123",
         "status": "pending"
