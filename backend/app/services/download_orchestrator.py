@@ -1,6 +1,6 @@
 from app.services.download_service import download_media
 from app.services.download_progress import create_progress_hook
-
+from app.services.download_job_manager import download_job_manager
 
 
 
@@ -42,3 +42,7 @@ class DownloadOrchestrator:
             self.job_manager.fail_job(
                 download_id, str(error)
             )
+            
+            
+
+download_orchestrator = DownloadOrchestrator(job_manager=download_job_manager)
