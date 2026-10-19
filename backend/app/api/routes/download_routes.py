@@ -32,7 +32,7 @@ def download_route(request: DownloadMediaRequest,
         audio_format=request.audio_format,
         
     )
-    return DownloadMediaResponse(**job)
+    return StartDownloadResponse(**job)
     
     
     
