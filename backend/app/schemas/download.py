@@ -11,14 +11,7 @@ class DownloadMediaRequest(BaseModel):
     audio_format: Literal["original", "mp3"] = "original"
     
     
-    
-class DownloadMediaResponse(BaseModel):
-    status: str
-    filename: str
-    filepath: str
-    
-    
-    
+
     
 class DownloadStatusResponse(BaseModel):
     download_id: str
