@@ -31,6 +31,6 @@ class DownloadStatusResponse(BaseModel):
     
     
     
-class StartDownloadResponse:
+class StartDownloadResponse(BaseModel):
     download_id: str
     status: str
