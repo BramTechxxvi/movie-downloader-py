@@ -1,6 +1,6 @@
 from uuid import uuid4
 from app.models.download_job import DownloadJOb, DownloadStatus
-
+from datetime import datetime, timezone
 
 
 
@@ -52,6 +52,7 @@ class DownloadJobManager:
         job.filename = filename
         job.filepath = filepath
         job.error = None
+        job.completed_at = datetime.now(timezone.utc)
         
         return job
     
