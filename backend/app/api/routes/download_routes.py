@@ -49,3 +49,15 @@ def get_download_status(download_id: str) -> DownloadStatusResponse:
         filename=job.filename,
         error= job.error
     )
+    
+    
+    
+    
+
+
+
+@router.get("/{download_id}/file")
+def get_download_file(download_id: str):
+    job = download_job_manager.get_job(download_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Download not found")
