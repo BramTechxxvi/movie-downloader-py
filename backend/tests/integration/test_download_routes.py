@@ -1,7 +1,8 @@
 from fastapi.testclient import TestClient
 from app.main import app
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from app.services.download_job_manager import download_job_manager
+from app.services.download_orchestrator import DownloadOrchestrator
 
 
 
@@ -10,9 +11,9 @@ client = TestClient(app)
 
 
 
-@patch("app.api.routes.download_routes.download_media")
-def test_download_media_returns_completed_status(mock_download_media):
-    mock_download_media.return_value = { 
+@patch("app.api.routes.download_routes.download_orchestrator")
+def test_download_media_returns_completed_status(mock_orchestrator):
+    mock_orchestrator.return_value = { 
         "status": "completed",
         "filename": "Example Video.mp4",
         "filepath": "downloads/Example Video.mp4"
@@ -25,7 +26,7 @@ def test_download_media_returns_completed_status(mock_download_media):
             "media_type": "video"
         }
     )
-    assert response.status_code == 200
+    assert response.status_code == 202
     assert response.json()["status"] == "completed"
 
 
@@ -91,3 +92,23 @@ def test_start_download_returns_download_id(mock_orchestrator):
         "download_id": "download-123",
         "status": "pending"
     }
+    
+    
+    
+
+
+def test_download_file_returns_completed_file(tmp_path):
+    file_path = tmp_path / "Example Video.mp4"
+    file_path.write_bytes(b"fake-video-content")
+    
+    job = download_job_manager.create_job()
+    download_job_manager.complete_job(
+        download_id=job.download_id,
+        filename="Example Video.mp4",
+        filepath=str(file_path),
+    )
+    response = client.post(
+        f"/api/v1/downloads/{job.download_id}/file"
+    )
+    assert response.status_code == 200
+    assert response.content == b"fake-video-content"

@@ -23,11 +23,10 @@ def download_route(request: DownloadMediaRequest,
     background_tasks.add_task(
         download_orchestrator.execute_download,
         download_id=job["download_id"],
-        url=str[request.url],
+        url=str(request.url),
         format_id=request.format_id,
         media_type=request.media_type,
         audio_format=request.audio_format,
-        
     )
     return StartDownloadResponse(**job)
     
