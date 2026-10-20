@@ -136,4 +136,5 @@ def test_download_file_returns_400_when_download_is_not_completed():
     
 
 def test_download_file_returns_404_when_job_does_not_exist():
-    pass
+    response = client.get(f"/api/v1/downloads/{"does-not-exist"}/file")
+    assert response.status_code == 404
