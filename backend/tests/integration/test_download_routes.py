@@ -33,19 +33,21 @@ def test_get_download_status_returns_completed_job():
 
 
 
-@patch("app.api.routes.download_routes.download_media")
-def test_download_media_returns_400_when_download_fails(mock_download_media):
-    mock_download_media.side_effect = ValueError("Unable to download media")
-    response = client.post(
-        "/api/v1/downloads",
-        json={
-            "url": "https://www.youtube.com/watch?v=abc123",
-            "format_id": "137",
-            "media_type": "video"
-        }
+def test_get_download_status_returns_failed_job():
+    job = download_job_manager.create_job()
+
+    download_job_manager.fail_job(
+        job.download_id,
+        "Unable to download media",
     )
-    assert response.status_code == 400
-    assert response.json() == { "detail": "Unable to download media"}
+
+    response = client.get(
+        f"/api/v1/downloads/{job.download_id}"
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "failed"
+    assert response.json()["error"] == "Unable to download media"
        
     
     
