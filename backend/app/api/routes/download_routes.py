@@ -4,6 +4,7 @@ from app.services.download_orchestrator import download_orchestrator
 from app.services.download_job_manager import download_job_manager
 from pathlib import Path
 from fastapi.responses import FileResponse
+from app.models.download_job import DownloadStatus
 
 
 
@@ -61,3 +62,19 @@ def get_download_file(download_id: str):
     job = download_job_manager.get_job(download_id)
     if job is None:
         raise HTTPException(status_code=404, detail="Download not found")
+    
+    if job.status != DownloadStatus.COMPLETED:
+        raise HTTPException(status_code=400, detail="Download not completed")
+    
+    if not job.filepath:
+        raise HTTPException(status_code=404, detail="DOwnloaded file not found")
+    
+    file_path = Path(job.filepath)
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Downloaded file not found")
+    
+    return FileResponse(
+        path=file_path,
+        filename=job.filename,
+        media_type="application/octet-stream"
+    )
