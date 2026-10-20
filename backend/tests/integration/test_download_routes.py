@@ -109,7 +109,7 @@ def test_download_file_returns_completed_file(tmp_path):
         filename="Example Video.mp4",
         filepath=str(file_path),
     )
-    response = client.post(
+    response = client.get(
         f"/api/v1/downloads/{job.download_id}/file"
     )
     assert response.status_code == 200
