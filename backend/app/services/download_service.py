@@ -26,7 +26,8 @@ def download_media(
     options = {
         "format": selected_format,
         "quiet": True,
-        "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s")
+        "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s"),
+        "js_runtimes":{"node": {}}
     }
     
     if progress_hook is not None:
