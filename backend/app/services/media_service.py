@@ -50,7 +50,8 @@ def analyze_media(url: str)-> dict:
     
     options = {
         "quiet": True,
-        "no_warnings": True
+        "no_warnings": True,
+        "js_runtimes": {"node": {}}
     }
     try:
         with YoutubeDL(options) as ydl:
