@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import StrEnum
-
+from datetime import datetime
 
 
 class DownloadStatus(StrEnum):
@@ -19,3 +19,4 @@ class DownloadJOb:
     filename: str | None = None
     filepath: str | None = None
     error: str | None = None
+    completed_at: datetime | None = None
