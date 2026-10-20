@@ -11,32 +11,23 @@ client = TestClient(app)
 
 
 
-@patch("app.api.routes.download_routes.download_orchestrator")
-def test_download_media_returns_completed_status(mock_orchestrator):
-    mock_orchestrator.create_download.return_value = {
-        "download_id": "download-123",
-        "status": "pending",
-    }
-    mock_orchestrator.execute_download(
-        download_id="download-123",
-        url="https://www.youtube.com/watch?v=abc123",
-        format_id="137",
-        media_type="video",
-        audio_format="original",
+def test_get_download_status_returns_completed_job():
+    job = download_job_manager.create_job()
+
+    download_job_manager.complete_job(
+        download_id=job.download_id,
+        filename="Example Video.mp4",
+        filepath="downloads/Example Video.mp4",
     )
-    
-    response1 = client.post(
-        "/api/v1/downloads",
-        json= { 
-            "url": "https://www.youtube.com/watch?v=abc123", 
-            "format_id": "137",
-            "media_type": "video",
-            "audio_format": "original"
-        }
+
+    response = client.get(
+        f"/api/v1/downloads/{job.download_id}"
     )
-    response2 = client.get(f"/api/v1/downloads/{"download-123"}")
-    assert response1.status_code == 202
-    assert response2.status_code == 200
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "completed"
+    assert response.json()["progress"] == 100.0
+    assert response.json()["filename"] == "Example Video.mp4"
 
 
 
