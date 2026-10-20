@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException, status, BackgroundTasks
 from app.schemas.download import ( DownloadMediaRequest, DownloadStatusResponse, StartDownloadResponse)
 from app.services.download_orchestrator import download_orchestrator
 from app.services.download_job_manager import download_job_manager
+from pathlib import Path
+from fastapi.responses import FileResponse
 
 
 
