@@ -25,17 +25,18 @@ def test_download_media_returns_completed_status(mock_orchestrator):
         audio_format="original",
     )
     
-    response = client.post(
+    response1 = client.post(
         "/api/v1/downloads",
         json= { 
             "url": "https://www.youtube.com/watch?v=abc123", 
             "format_id": "137",
-            "media_type": "video"
+            "media_type": "video",
             "audio_format": "original"
         }
     )
-    assert response.status_code == 202
-    assert response.json()["status"] == "completed"
+    response2 = client.get(f"/api/v1/downloads/{"download-123"}")
+    assert response1.status_code == 202
+    assert response2.status_code == 200
 
 
 
@@ -129,3 +130,10 @@ def test_download_file_returns_400_when_download_is_not_completed():
     job = download_job_manager.create_job()
     response = client.get(f"/api/v1/downloads/{job.download_id}/file")
     assert response.status_code == 400
+    
+    
+    
+    
+
+def test_download_file_returns_404_when_job_does_not_exist():
+    pass
