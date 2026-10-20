@@ -1,12 +1,13 @@
 from yt_dlp import YoutubeDL
 from pathlib import Path
 from yt_dlp.utils import DownloadError
+from app.core.config import settings
 
 
 
 
 
-DOWNLOAD_DIR = Path("downloads")
+DOWNLOAD_DIR = settings.download_dir
 
 
 
