@@ -5,12 +5,12 @@ def create_progress_hook(manager, download_id: str):
         if data.get("status") != "downloading":
             return
         
-        downloading_bytes = data.get("downloading_bytes")
-        total_bytes = data.get("total_bytes")
-        if not downloading_bytes or not total_bytes:
+        downloaded_bytes = data.get("downloaded_bytes", 0)
+        total_bytes = data.get("total_bytes") or data.get("total_bytes_estimate")
+        if not downloaded_bytes or not total_bytes:
             return
         
-        progress = (downloading_bytes / total_bytes) * 100
+        progress = (downloaded_bytes / total_bytes) * 100
         manager.update_progress(download_id, round(progress, 2))
     
     return progress_hook
