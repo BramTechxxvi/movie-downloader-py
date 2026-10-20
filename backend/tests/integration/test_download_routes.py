@@ -22,14 +22,16 @@ def test_download_media_returns_completed_status(mock_orchestrator):
         url="https://www.youtube.com/watch?v=abc123",
         format_id="137",
         media_type="video",
-        
+        audio_format="original",
     )
+    
     response = client.post(
         "/api/v1/downloads",
         json= { 
             "url": "https://www.youtube.com/watch?v=abc123", 
             "format_id": "137",
             "media_type": "video"
+            "audio_format": "original"
         }
     )
     assert response.status_code == 202
