@@ -38,3 +38,16 @@ def test_is_expired_returns_true_for_old_download():
     )
 
     assert result is True
+    
+    
+    
+    
+def test_is_expired_returns_false_for_recent_download():
+    completed_at = datetime.now(timezone.utc)
+
+    result = is_expired(
+        completed_at=completed_at,
+        lifetime_minutes=15,
+    )
+
+    assert result is False
