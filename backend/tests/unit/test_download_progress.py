@@ -12,7 +12,7 @@ def test_progress_hook_updates_download_progress():
     hook = create_progress_hook(manager, download_id="download-123")
     hook ({
         "status": "downloading",
-        "downloading_bytes":50,
+        "downloaded_bytes":50.0,
         "total_bytes": 100
     })
     manager.update_progress.assert_called_once_with("download-123", 50.0)
