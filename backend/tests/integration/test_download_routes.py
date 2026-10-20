@@ -13,11 +13,17 @@ client = TestClient(app)
 
 @patch("app.api.routes.download_routes.download_orchestrator")
 def test_download_media_returns_completed_status(mock_orchestrator):
-    mock_orchestrator.return_value = { 
-        "status": "completed",
-        "filename": "Example Video.mp4",
-        "filepath": "downloads/Example Video.mp4"
+    mock_orchestrator.create_download.return_value = {
+        "download_id": "download-123",
+        "status": "pending",
     }
+    mock_orchestrator.execute_download(
+        download_id="download-123",
+        url="https://www.youtube.com/watch?v=abc123",
+        format_id="137",
+        media_type="video",
+        
+    )
     response = client.post(
         "/api/v1/downloads",
         json= { 
@@ -112,3 +118,12 @@ def test_download_file_returns_completed_file(tmp_path):
     )
     assert response.status_code == 200
     assert response.content == b"fake-video-content"
+    
+    
+    
+    
+    
+def test_download_file_returns_400_when_download_is_not_completed():
+    job = download_job_manager.create_job()
+    response = client.get(f"/api/v1/downloads/{job.download_id}/file")
+    assert response.status_code == 400
