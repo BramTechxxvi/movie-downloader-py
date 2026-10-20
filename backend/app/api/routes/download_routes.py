@@ -74,7 +74,7 @@ def get_download_file(download_id: str):
         raise HTTPException(status_code=404, detail="Downloaded file not found")
     
     return FileResponse(
-        path=file_path,
+        path=str(file_path),
         filename=job.filename,
         media_type="application/octet-stream"
     )
