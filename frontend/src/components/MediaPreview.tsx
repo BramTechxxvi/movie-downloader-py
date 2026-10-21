@@ -27,6 +27,9 @@ export function MediaPreview({media}: MediaPreviewProps) {
                         Uploaded by {media.uploader}
                     </p>
                 )}
+                <p className="text-sm text-gray-500">
+                    {media.formats.length} formats available
+                </p>
 
             </div>
         </div>
