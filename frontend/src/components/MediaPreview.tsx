@@ -4,7 +4,7 @@ import type { MediaAnalysis } from "../types/media";
 
 
 interface MediaPreviewProps {
-    media: MediaAnalysis
+    media: MediaAnalysis;
 }
 
 export function MediaPreview({media}: MediaPreviewProps) {

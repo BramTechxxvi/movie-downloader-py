@@ -5,7 +5,7 @@ import { useState, type FormEvent} from "react";
 
 interface UrlInputProps{
     onAnalyze:(url: string) =>Promise<void>;
-    loading: boolean
+    loading: boolean;
 }
 
 
@@ -18,7 +18,7 @@ export function UrlInput({onAnalyze, loading}: UrlInputProps) {
         if(!url.trim()) {
             return;
         }
-        await onAnalyze(url.trim())
+        await onAnalyze(url.trim());
     }
 
     return (
