@@ -37,7 +37,19 @@ export function HomePage() {
                         Media Downloader
                     </h1>
 
+                    <p className="text-gray-600">
+                        Paste a supported media URL to inspect available download options.
+                    </p>
                 </div>
+
+                <UrlInput onAnalyze={handleAnalyze} loading={loading}/>
+                {error && (
+                    <div className="rounded-xl bg-red-50 p-4 text-red-700">
+                        {error}
+                    </div>
+                )}
+                {media && <MediaPreview media={media}/>}
+
             </div>
         </main>
     )
