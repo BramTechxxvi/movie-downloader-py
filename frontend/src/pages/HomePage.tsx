@@ -49,7 +49,6 @@ export function HomePage() {
                     </div>
                 )}
                 {media && <MediaPreview media={media}/>}
-
             </div>
         </main>
     )
