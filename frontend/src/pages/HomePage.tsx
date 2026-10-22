@@ -21,6 +21,7 @@ export function HomePage() {
             setLoading(true);
             setError(null);
             setMedia(null);
+            setSelectedFormat(null);
 
             const result = await analyzeMedia(url);
             setMedia(result)
@@ -30,6 +31,12 @@ export function HomePage() {
             setLoading(false);
         }
     }
+
+
+    function handleFormatSelect(format: MediaFormat) {
+        setSelectedFormat(format)
+    }
+    
 
     return (
         <main className="min-h-screen bg-gray-50 px-4 py-16">
@@ -50,7 +57,10 @@ export function HomePage() {
                         {error}
                     </div>
                 )}
-                {media && <MediaPreview media={media}/>}
+                {media && (
+                    <MediaPreview media={media} />
+                    <FormatSelector formats={media.formats onselect={handleFormatSelect}}/>
+                )}
             </div>
         </main>
     )
