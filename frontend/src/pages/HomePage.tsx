@@ -36,7 +36,7 @@ export function HomePage() {
     function handleFormatSelect(format: MediaFormat) {
         setSelectedFormat(format)
     }
-    
+
 
     return (
         <main className="min-h-screen bg-gray-50 px-4 py-16">
@@ -58,8 +58,19 @@ export function HomePage() {
                     </div>
                 )}
                 {media && (
+                    <>
                     <MediaPreview media={media} />
-                    <FormatSelector formats={media.formats onselect={handleFormatSelect}}/>
+                    <FormatSelector formats={media.formats} onSelect={handleFormatSelect}/>
+                    </>
+                )}
+
+                {selectedFormat && (
+                    <div className="rounded-xl bg-gray-100 p-4">
+                        Selected:
+                        {" "}
+                        {selectedFormat.resolution ?? "Audio"}
+                        ({selectedFormat.extension})
+                    </div>
                 )}
             </div>
         </main>
