@@ -45,11 +45,21 @@ export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
 
             <div className="grid gap-3 sm:grid-cols-2">
                 {filteredFormats.map((format) => (
-                    <button>
-
+                    <button
+                    key={format.format_id}
+                    type="button"
+                    onClick={()=> onSelect(format)}
+                    className="rounded-xl border border-gray-200 p-4 text-left transition hover:border-black"
+                    >
+                        <p className="font-medium">
+                            {format.resolution ?? "Audio"};
+                        </p>
+                        <p className="text-sm text-gray-500">
+                            {format.extension.toUpperCase()};
+                        </p>
                     </button>
                 ))}
             </div>
         </div>
-    )
+    );
 }
