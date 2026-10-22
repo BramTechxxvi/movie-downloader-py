@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { use, useState } from "react";
 import { analyzeMedia } from "../api/mediaApi";
 import { MediaPreview } from "../components/MediaPreview";
 import { UrlInput } from "../components/UrlInput";
-import type { MediaAnalysis } from "../types/media";
+import type { MediaAnalysis, MediaFormat } from "../types/media";
+import { FormatSelector } from "../components/FormatSelector";
 
 
 
@@ -13,6 +14,7 @@ export function HomePage() {
     const [media, setMedia] = useState<MediaAnalysis | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [selectedFormat, setSelectedFormat] = useState<MediaFormat | null>(null);
 
     async function handleAnalyze(url: string) {
         try {
