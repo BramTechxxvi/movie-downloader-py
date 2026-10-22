@@ -13,5 +13,43 @@ export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
     const filteredFormats = useMemo(
         ()=> formats.filter((format)=> format.type === mediaType),
         [formats, mediaType]
+    );
+
+    return (
+        <div className="space-y-4 rounded-2xl border border-gray-200 bg-white p-5">
+            <div className="flex gap-2">
+                <button
+                type="button"
+                onClick={()=> setMediaType("video")}
+                className={`rounded-lg px-4 py-2 text-sm font-medium ${
+                    mediaType === "video"
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-gray-700"
+                    }`}
+                >
+                    Video
+                </button>
+
+               <button
+                type="button"
+                onClick={()=> setMediaType("audio")}
+                className={`rounded-lg px-4 py-2 text-sm font-medium ${
+                    mediaType === "audio"
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-gray-700"
+                    }`}
+                >
+                    Audio
+                </button>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+                {filteredFormats.map((format) => (
+                    <button>
+
+                    </button>
+                ))}
+            </div>
+        </div>
     )
 }
