@@ -14,3 +14,16 @@ export interface MediaAnalysis {
     uploader: string | null;
     formats: MediaFormat[];
 }
+
+export interface StartDownloadResponse {
+    download_id: string;
+    status: string;
+}
+
+export interface DownloadStatus {
+    download_id: string;
+    status: "pending" | "downloading" |"completed" | "failed";
+    progress: number;
+    filename: string | null;
+    error: string | null
+}
