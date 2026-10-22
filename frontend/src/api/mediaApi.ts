@@ -1,8 +1,17 @@
-import type { MediaAnalysis } from "../types/media";
+import type { 
+    MediaAnalysis,
+    DownloadStatus,
+    StartDownloadResponse,
+ } from "../types/media";
 
 
 
-
+ interface StartDownloadRequest {
+    url: string;
+    formatId: string;
+    mediaType: "video" | "audio";
+    audioFormat: "original" | "mp3";
+ }
 
 
 
@@ -22,3 +31,13 @@ Promise<MediaAnalysis> {
     }
     return response.json();
 }
+
+
+
+export async function startDownload({
+    url, formatId, mediaType, audioFormat = "original",
+}: StartDownloadRequest) {
+    const response
+}
+
+
