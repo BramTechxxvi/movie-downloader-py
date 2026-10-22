@@ -13,7 +13,7 @@ Promise<MediaAnalysis> {
     const response = await fetch(
         `${API_BASE_URL}/api/v1/media/analyze`, {
             method: "POST",
-            headers: { "Content-Type": "appliction/json" },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({url})
         }
     );
