@@ -1,9 +1,10 @@
-import { use, useState } from "react";
-import { analyzeMedia } from "../api/mediaApi";
+import { useState } from "react";
+import { analyzeMedia, startDownload } from "../api/mediaApi";
 import { MediaPreview } from "../components/MediaPreview";
 import { UrlInput } from "../components/UrlInput";
 import type { MediaAnalysis, MediaFormat } from "../types/media";
 import { FormatSelector } from "../components/FormatSelector";
+import { useDownloadStatus } from "../hooks/useDownloadStatus";
 
 
 
@@ -15,6 +16,12 @@ export function HomePage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [selectedFormat, setSelectedFormat] = useState<MediaFormat | null>(null);
+   
+    const [currentUrl, setCurrentUrl] = useState<string | null>(null);
+    const [downloadId, setDownloadId] = useState<string | null>(null);
+    const [startingDownload, setStartingDownload] = useState(false);
+    const downloadStatus = useDownloadStatus(downloadId);
+
 
     async function handleAnalyze(url: string) {
         try {

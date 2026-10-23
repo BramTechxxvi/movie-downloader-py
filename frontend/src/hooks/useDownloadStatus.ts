@@ -6,7 +6,7 @@ import type { DownloadStatus } from "../types/media";
 
 
 
-export function useDownoadStatus(downloadId: string | null) {
+export function useDownloadStatus(downloadId: string | null) {
     const [status, setStatus] = useState<DownloadStatus | null>(null);
     useEffect(()=> {
         if (!downloadId) {
