@@ -23,8 +23,21 @@ export function DownloadProgress({status}: DownloadProgressProps) {
                 </span>
             </div>
 
-            <div></div>
+            <div className="h-3 oveflow-hidden rounded-full bg-gray-200">
+                <div 
+                className="h-full bg-black transition-all duration-300"
+                style={{width: `${progress}%`}}
+                />
+            </div>
+
+            {status.status === "completed" && (
+                <a 
+                href={getDownloadFileUrl(status.download_id)}
+                className="inline-block rounded-xl bg-black px-5 py-3 font-medium text-white"
+                >
+                    Download File
+                </a>
+            )};
         </div>
-    )
-        
+    );   
 }
