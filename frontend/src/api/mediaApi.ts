@@ -30,7 +30,7 @@ Promise<MediaAnalysis> {
         throw new Error("Unable to analyze media")
     }
     return response.json();
-}
+};
 
 
 
@@ -43,8 +43,9 @@ export async function startDownload({
         body: JSON.stringify({url, formatId, mediaType, audioFormat})
     })
     if (!response.ok) {
-        throw new Error("Unable to start download")
+        throw new Error("Unable to start download");
     }
-}
+    return response.json();
+};
 
 
