@@ -28,10 +28,13 @@ export function HomePage() {
             setLoading(true);
             setError(null);
             setMedia(null);
+
             setSelectedFormat(null);
+            setDownloadId(null);
 
             const result = await analyzeMedia(url);
             setMedia(result)
+            setCurrentUrl(url)
         }catch {
             setError("Unable to analyze this URL.");
         } finally {
