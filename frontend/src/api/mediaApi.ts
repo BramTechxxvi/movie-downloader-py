@@ -37,7 +37,14 @@ Promise<MediaAnalysis> {
 export async function startDownload({
     url, formatId, mediaType, audioFormat = "original",
 }: StartDownloadRequest) {
-    const response
+    const response = await fetch(`${API_BASE_URL}/api/v1/downloads`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({url, formatId, mediaType, audioFormat})
+    })
+    if (!response.ok) {
+        throw new Error("Unable to start download")
+    }
 }
 
 
