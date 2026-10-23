@@ -49,3 +49,11 @@ export async function startDownload({
 };
 
 
+
+export async function getDownloadStatus(downloadId: string): Promise<DownloadStatus> {
+    const response = await fetch(`${API_BASE_URL}/api/v1/downloads/${downloadId}`);
+    if(!response.ok) {
+        throw new Error("Unable to fetch download status");
+    }
+    return response.json();
+}
