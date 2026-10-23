@@ -57,3 +57,8 @@ export async function getDownloadStatus(downloadId: string): Promise<DownloadSta
     }
     return response.json();
 }
+
+
+export function getDownloadFileUrl(downloadId: string) {
+    return `${API_BASE_URL}/api/v1/downloads/${downloadId}/file`
+}
