@@ -43,6 +43,14 @@ export function HomePage() {
     }
 
 
+
+    async function handleDownload() {
+        if(!selectedFormat || !currentUrl) {
+            return;
+        }
+    }
+
+
     function handleFormatSelect(format: MediaFormat) {
         setSelectedFormat(format)
     }
