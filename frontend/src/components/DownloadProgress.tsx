@@ -1,4 +1,3 @@
-import { Divide } from "lucide-react";
 import { getDownloadFileUrl } from "../api/mediaApi";
 import type { DownloadStatus } from "../types/media";
 
