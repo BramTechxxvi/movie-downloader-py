@@ -6,7 +6,7 @@ import type { MediaFormat } from "../types/media"
 
 
 
-interface FormatSelector {
+export interface FormatSelection{
     format: MediaFormat;
     audioFormat: "original" | "mp3"
 }
@@ -14,7 +14,7 @@ interface FormatSelector {
 
 interface FormatSelectorProps {
     formats: MediaFormat[];
-    onSelect: (selection: FormatSelector)=> void;
+    onSelect: (selection: FormatSelection)=> void;
 }
 
 
@@ -26,34 +26,70 @@ export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
         ()=> formats.filter((format)=> format.type === mediaType),
         [formats, mediaType]
     );
+    const [audioFormat, setAudioFormat] = useState<"original" | "mp3">("original");
 
+
+    function selectFormat(format: MediaFormat) {
+        onselect({ format, audioFormat });
+    }
+
+    function changeAudioFormat(value: "original" | "mp3") {
+        setAudioFormat(value)
+    }
     return (
-        <div className="space-y-4 rounded-2xl border border-gray-200 bg-white p-5">
+        <section className="space-y-4 rounded-2xl border border-gray-200 bg-white p-5">
             <div className="flex gap-2">
+                {(["video", "audio"] as const).map((type)=> (
                 <button
+                key={type}
                 type="button"
-                onClick={()=> setMediaType("video")}
-                className={`rounded-lg px-4 py-2 text-sm font-medium ${
-                    mediaType === "video"
+                onClick={()=> setMediaType(type)}
+                className={`rounded-lg px-4 py-2 font-medium capitalize ${
+                    mediaType === type
                     ? "bg-black text-white"
                     : "bg-gray-100 text-gray-700"
-                    }`}
+                }`}
                 >
-                    Video
+                    {type}
                 </button>
-
-               <button
-                type="button"
-                onClick={()=> setMediaType("audio")}
-                className={`rounded-lg px-4 py-2 text-sm font-medium ${
-                    mediaType === "audio"
-                    ? "bg-black text-white"
-                    : "bg-gray-100 text-gray-700"
-                    }`}
-                >
-                    Audio
-                </button>
+                ))}
             </div>
+
+            {mediaType === "audio" && (
+                <fieldset className="space-y-2">
+                    <legend className="font-medium">
+                        Audio output
+                    </legend>
+
+                    <label className="flex items-center gap-2">
+                        <input 
+                        type="radio" 
+                        name="audioFormat"
+                        value="original"
+                        checked={audioFormat === "original"}
+                        onChange={()=> changeAudioFormat("original")}
+                        />
+                        Original audio
+                    </label>
+
+                    <label className="flex items-center gap-2">
+                        <input 
+                        type="radio" 
+                        name="audioFormat"
+                        value="mp3"
+                        checked={audioFormat === "mp3"}
+                        onChange={()=> changeAudioFormat("mp3")}
+                        />
+                        MP3
+                    </label>
+                </fieldset>
+            )}
+
+            {filteredFormats.length === 0 ? (
+                <p classN>
+                    No {mediaType} formats are available
+                </p>
+            )}
 
             <div className="grid gap-3 sm:grid-cols-2">
                 {filteredFormats.map((format) => (
@@ -72,6 +108,6 @@ export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
                     </button>
                 ))}
             </div>
-        </div>
+        </section>
     );
 }
