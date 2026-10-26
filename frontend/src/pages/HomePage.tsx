@@ -60,7 +60,7 @@ export function HomePage() {
                 mediaType: selection.format.type,
                 audioFormat: selection.audioFormat
             });
-            setDownloadId(result.downloadId)
+            setDownloadId(result.download_id)
         }catch {
             setError("Unable to start download")
         } finally {
@@ -103,7 +103,7 @@ export function HomePage() {
                     disabled={startingDownload}
                     className="w-full rounded-xl bg-black px-6 py-3 font-medium text-white disabled:opacity-50"
                     >
-                        {startDownload
+                        {startingDownload
                         ? "Starting..."
                         : "Download" }
                     </button>
