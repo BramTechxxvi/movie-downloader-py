@@ -30,7 +30,7 @@ export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
 
 
     function selectFormat(format: MediaFormat) {
-        onselect({ format, audioFormat });
+        onSelect({ format, audioFormat });
     }
 
     function changeAudioFormat(value: "original" | "mp3") {
