@@ -61,7 +61,7 @@ export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
                 <button
                 key={type}
                 type="button"
-                onClick={()=> setMediaType(type)}
+                onClick={()=> changeMediaType(type)}
                 className={`rounded-lg px-4 py-2 font-medium capitalize ${
                     mediaType === type
                     ? "bg-black text-white"
