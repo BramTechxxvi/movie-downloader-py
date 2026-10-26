@@ -86,17 +86,16 @@ export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
             )}
 
             {filteredFormats.length === 0 ? (
-                <p classN>
+                <p className="text-sm text-gray-500">
                     No {mediaType} formats are available
                 </p>
-            )}
-
-            <div className="grid gap-3 sm:grid-cols-2">
-                {filteredFormats.map((format) => (
-                    <button
-                    key={format.format_id}
-                    type="button"
-                    onClick={()=> onSelect(format)}
+            ): (
+                <div className="grid gap-3 sm:grid-cols-2">
+                    {filteredFormats.map((format) => (
+                        <button
+                        key={format.format_id}
+                        type="button"
+                        onClick={()=> selectFormat(format)}
                     className="rounded-xl border border-gray-200 p-4 text-left transition hover:border-black"
                     >
                         <p className="font-medium">
@@ -108,6 +107,7 @@ export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
                     </button>
                 ))}
             </div>
+            )} 
         </section>
     );
 }
