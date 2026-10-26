@@ -14,7 +14,7 @@ export interface FormatSelection{
 
 interface FormatSelectorProps {
     formats: MediaFormat[];
-    onSelect: (selection: FormatSelection)=> void;
+    onSelect: (selection: FormatSelection | null)=> void;
 }
 
 
