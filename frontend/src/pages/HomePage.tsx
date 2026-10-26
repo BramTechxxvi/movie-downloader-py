@@ -50,22 +50,22 @@ export function HomePage() {
             return;
         }
 
-        try {
-            setStartingDownload(true);
-            setError(null);
+        // try {
+        //     setStartingDownload(true);
+        //     setError(null);
 
-            const result = await startDownload({
-                url: currentUrl,
-                formatId: selectedFormat.format_id,
-                mediaType: selectedFormat.type,
-                audioFormat: selectedFormat.
-            });
-            setDownloadId(result.downloadId)
-        }catch {
-            setError("Unable to start download")
-        } finally {
-            setStartingDownload(false);
-        }
+        //     const result = await startDownload({
+        //         url: currentUrl,
+        //         formatId: selectedFormat.format_id,
+        //         mediaType: selectedFormat.type,
+        //         audioFormat: selectedFormat.
+        //     });
+        //     setDownloadId(result.downloadId)
+        // }catch {
+        //     setError("Unable to start download")
+        // } finally {
+        //     setStartingDownload(false);
+        // }
     }
 
 

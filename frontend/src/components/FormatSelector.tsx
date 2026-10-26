@@ -3,10 +3,22 @@ import type { MediaFormat } from "../types/media"
 
 
 
+
+
+
+interface FormatSelector {
+    format: MediaFormat;
+    audioFormat: "original" | "mp3"
+}
+
+
 interface FormatSelectorProps {
     formats: MediaFormat[];
-    onSelect: (format: MediaFormat)=> void;
+    onSelect: (selection: FormatSelector)=> void;
 }
+
+
+
 
 export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
     const [mediaType, setMediaType] = useState<"video" | "audio">("video");
