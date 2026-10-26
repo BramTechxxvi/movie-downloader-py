@@ -2,8 +2,8 @@ import { useState } from "react";
 import { analyzeMedia, startDownload } from "../api/mediaApi";
 import { MediaPreview } from "../components/MediaPreview";
 import { UrlInput } from "../components/UrlInput";
-import type { MediaAnalysis, MediaFormat } from "../types/media";
-import { FormatSelector } from "../components/FormatSelector";
+import type { MediaAnalysis } from "../types/media";
+import { FormatSelector, type FormatSelection } from "../components/FormatSelector";
 import { useDownloadStatus } from "../hooks/useDownloadStatus"
 import { DownloadProgress } from "../components/DownloadProgress";
 
@@ -16,7 +16,7 @@ export function HomePage() {
     const [media, setMedia] = useState<MediaAnalysis | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [selectedFormat, setSelectedFormat] = useState<MediaFormat | null>(null);
+    const [selection, setSelection] = useState<FormatSelection | null>(null);
    
     const [currentUrl, setCurrentUrl] = useState<string | null>(null);
     const [downloadId, setDownloadId] = useState<string | null>(null);
@@ -30,7 +30,7 @@ export function HomePage() {
             setError(null);
             setMedia(null);
 
-            setSelectedFormat(null);
+            setSelection(null);
             setDownloadId(null);
 
             const result = await analyzeMedia(url);
@@ -46,31 +46,26 @@ export function HomePage() {
 
 
     async function handleDownload() {
-        if(!selectedFormat || !currentUrl) {
+        if(!selection || !currentUrl) {
             return;
         }
 
-        // try {
-        //     setStartingDownload(true);
-        //     setError(null);
+        try {
+            setStartingDownload(true);
+            setError(null);
 
-        //     const result = await startDownload({
-        //         url: currentUrl,
-        //         formatId: selectedFormat.format_id,
-        //         mediaType: selectedFormat.type,
-        //         audioFormat: selectedFormat.
-        //     });
-        //     setDownloadId(result.downloadId)
-        // }catch {
-        //     setError("Unable to start download")
-        // } finally {
-        //     setStartingDownload(false);
-        // }
-    }
-
-
-    function handleFormatSelect(format: MediaFormat) {
-        setSelectedFormat(format)
+            const result = await startDownload({
+                url: currentUrl,
+                formatId: selection.format.format_id,
+                mediaType: selection.format.type,
+                audioFormat: selection.audioFormat
+            });
+            setDownloadId(result.downloadId)
+        }catch {
+            setError("Unable to start download")
+        } finally {
+            setStartingDownload(false);
+        }
     }
 
 
@@ -96,11 +91,11 @@ export function HomePage() {
                 {media && (
                     <>
                     <MediaPreview media={media} />
-                    <FormatSelector formats={media.formats} onSelect={handleFormatSelect}/>
+                    <FormatSelector formats={media.formats} onSelect={setSelection}/>
                     </>
                 )}
 
-                {selectedFormat && !downloadId && (
+                {selection && !downloadId && (
                     // <div className="rounded-xl bg-gray-100 p-4">
                     //     Selected:
                     //     {" "}
