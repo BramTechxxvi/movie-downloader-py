@@ -4,7 +4,8 @@ import { MediaPreview } from "../components/MediaPreview";
 import { UrlInput } from "../components/UrlInput";
 import type { MediaAnalysis, MediaFormat } from "../types/media";
 import { FormatSelector } from "../components/FormatSelector";
-import { useDownloadStatus } from "../hooks/useDownloadStatus";
+import { useDownloadStatus } from "../hooks/useDownloadStatus"
+import { DownloadProgress } from "../components/DownloadProgress";
 
 
 
@@ -60,6 +61,10 @@ export function HomePage() {
                 audioFormat: selectedFormat.
             });
             setDownloadId(result.downloadId)
+        }catch {
+            setError("Unable to start download")
+        } finally {
+            setStartingDownload(false);
         }
     }
 
@@ -95,13 +100,27 @@ export function HomePage() {
                     </>
                 )}
 
-                {selectedFormat && (
-                    <div className="rounded-xl bg-gray-100 p-4">
-                        Selected:
-                        {" "}
-                        {selectedFormat.resolution ?? "Audio"}
-                        ({selectedFormat.extension})
-                    </div>
+                {selectedFormat && !downloadId && (
+                    // <div className="rounded-xl bg-gray-100 p-4">
+                    //     Selected:
+                    //     {" "}
+                    //     {selectedFormat.resolution ?? "Audio"}
+                    //     ({selectedFormat.extension})
+                    // </div>
+                    <button
+                    type="button"
+                    onClick={handleDownload}
+                    disabled={startingDownload}
+                    className="w-full rounded-xl bg-black px-6 py-3 font-medium text-white disabled:opacity-50"
+                    >
+                        {startDownload
+                        ? "Starting..."
+                        : "Download" }
+                    </button>
+                )}
+
+                {downloadStatus && (
+                    < DownloadProgress status={downloadStatus}/>
                 )}
             </div>
         </main>
