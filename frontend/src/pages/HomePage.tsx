@@ -48,6 +48,19 @@ export function HomePage() {
         if(!selectedFormat || !currentUrl) {
             return;
         }
+
+        try {
+            setStartingDownload(true);
+            setError(null);
+
+            const result = await startDownload({
+                url: currentUrl,
+                formatId: selectedFormat.format_id,
+                mediaType: selectedFormat.type,
+                audioFormat: selectedFormat.
+            });
+            setDownloadId(result.downloadId)
+        }
     }
 
 

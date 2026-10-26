@@ -29,6 +29,12 @@ export function DownloadProgress({status}: DownloadProgressProps) {
                 />
             </div>
 
+            {status.status === "failed" && (
+                <p className="text-sm text-red-600">
+                    {status.error ?? "Download faile"}
+                </p>
+            )}
+
             {status.status === "completed" && (
                 <a 
                 href={getDownloadFileUrl(status.download_id)}
