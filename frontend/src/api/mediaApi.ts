@@ -1,7 +1,6 @@
 import type { 
     MediaAnalysis,
     DownloadStatus,
-    StartDownloadResponse,
  } from "../types/media";
 
 
@@ -40,8 +39,13 @@ export async function startDownload({
     const response = await fetch(`${API_BASE_URL}/api/v1/downloads`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({url, formatId, mediaType, audioFormat})
-    })
+        body: JSON.stringify({
+            url, 
+            format_id: formatId,
+            media_type: mediaType,
+            audio_format: audioFormat
+        })
+    });
     if (!response.ok) {
         throw new Error("Unable to start download");
     }

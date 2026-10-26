@@ -96,12 +96,7 @@ export function HomePage() {
                 )}
 
                 {selection && !downloadId && (
-                    // <div className="rounded-xl bg-gray-100 p-4">
-                    //     Selected:
-                    //     {" "}
-                    //     {selectedFormat.resolution ?? "Audio"}
-                    //     ({selectedFormat.extension})
-                    // </div>
+                
                     <button
                     type="button"
                     onClick={handleDownload}
