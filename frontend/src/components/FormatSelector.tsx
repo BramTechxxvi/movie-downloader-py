@@ -26,13 +26,16 @@ export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
         ()=> formats.filter((format)=> format.type === mediaType),
         [formats, mediaType]
     );
+
     const [audioFormat, setAudioFormat] = useState<"original" | "mp3">("original");
     const [selectedFormat, setSelectedFormat] =  useState<MediaFormat | null>(null);
+
 
     function selectFormat(format: MediaFormat) {
         setSelectedFormat(format);
         onSelect({ format, audioFormat });
     };
+
 
     function changeAudioFormat(value: "original" | "mp3") {
         setAudioFormat(value);
@@ -40,6 +43,17 @@ export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
             onSelect({format: selectedFormat, audioFormat: value});
         };
     };
+
+
+    function changeMediaType(type: "video" | "audio") {
+        if (type === mediaType) {
+            return;
+        }
+        setMediaType(type);
+        setSelectedFormat(null);
+        onSelect(null);
+    }
+
     return (
         <section className="space-y-4 rounded-2xl border border-gray-200 bg-white p-5">
             <div className="flex gap-2">
