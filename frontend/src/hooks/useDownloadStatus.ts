@@ -10,14 +10,14 @@ export function useDownloadStatus(downloadId: string | null) {
     const [status, setStatus] = useState<DownloadStatus | null>(null);
     useEffect(()=> {
         if (!downloadId) {
-            setStatus(null);
             return;
         };
-        
+
+        const id = downloadId
         let cancelled = false;
         async function poll() {
             try {
-                const result = await getDownloadStatus(downloadId)
+                const result = await getDownloadStatus(id)
                 if(cancelled) {
                     return;
                 }

@@ -42,7 +42,7 @@ export function DownloadProgress({status}: DownloadProgressProps) {
                 >
                     Download File
                 </a>
-            )};
+            )}
         </div>
     );   
 }
