@@ -1,7 +1,12 @@
 from app.services.download_service import download_media
 from app.services.download_progress import create_progress_hook
 from app.services.download_job_manager import download_job_manager
+import logging
 
+
+
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -39,8 +44,10 @@ class DownloadOrchestrator:
                 filepath=result["filepath"],
             )
         except ValueError as error:
+            logger.warning("Download %s failed: %s", download_id, error)
             self.job_manager.fail_job(
-                download_id, str(error)
+                download_id, "Unable to download this media. "
+                "Check the URL and selected format, then try again."
             )
             
             
