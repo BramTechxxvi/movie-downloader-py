@@ -12,11 +12,14 @@ DOWNLOAD_DIR = settings.download_dir
 
 
 
+class MediaDownloadError(Exception):
+    """Raised when media cannot be downloaded successfully."""
+
 
 
 def download_media(
     url: str, format_id: str, media_type: str, 
-    audio_format: str = "original", progress_hook=None)-> dict:
+    audio_format: str = "original", progress_hook: Callable | None=None)-> dict:
 
     if media_type not in {"video", "audio"}:
         raise ValueError("Unsupported media type.")
@@ -56,6 +59,16 @@ def download_media(
     try:
         with YoutubeDL(options) as ydl:
             info = ydl.extract_info(url, download=True)
+            if not info or not isinstance(info, dict):
+                raise MediaDownloadError("The provider returned invalid downoad information.")
+            
+            filepath = Path(ydl.prepare_filename(info))
+            if media_type == "audio" and audio_format == "mp3":
+                filepath = filepath.with_suffix(".mp3")
+            
+            elif media_type == "video" and info.get("requested_download", []):
+                filepath = filepath.with_suffix(".mp4")
+                
     except DownloadError as error:
         raise ValueError("Unable to download media", error)
     
