@@ -5,7 +5,7 @@ from app.services.download_job_manager import download_job_manager
 from pathlib import Path
 from fastapi.responses import FileResponse
 from app.models.download_job import DownloadStatus
-
+from app.services.media_service import detect_provider
 
 
 
@@ -21,6 +21,10 @@ router = APIRouter(
             status_code=status.HTTP_202_ACCEPTED)
 def download_route(request: DownloadMediaRequest,
     background_tasks: BackgroundTasks)-> StartDownloadResponse:
+    
+    provider = detect_provider(str(request.url))
+    if provider == "protected":
+        raise HTTPException(status_code=400, detail="THis media provider is not supported")
     
     job = download_orchestrator.create_download()
     background_tasks.add_task(
