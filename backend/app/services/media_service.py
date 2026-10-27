@@ -46,7 +46,7 @@ def detect_provider(url: str)-> str:
 def analyze_media(url: str)-> dict:
     provider = detect_provider(url)
     if provider == "protected":
-        raise ValueError("Protected media provider")
+        raise ValueError("This media provider is not supported.")
     
     options = {
         "quiet": True,
@@ -57,8 +57,18 @@ def analyze_media(url: str)-> dict:
         with YoutubeDL(options) as ydl:
             info = ydl.extract_info(url, download=False)
     except DownloadError as error:
-        raise ValueError("Unable to analyze media")
+        raise ValueError(
+            "Unable to analyze this media. It may be unavailable "
+            "or the provider may not be supported."
+        )
         
+    if not info or not isinstance(info, dict):
+        raise ValueError("The provider returned invalid media information.")
+        
+    formats = normalize_formats(info.get("formats") or [])
+    if not formats:
+        raise ValueError("No downloadable media formats were found.")
+    
     return {
         "provider": provider,
         "id": info.get("id"),
@@ -66,7 +76,7 @@ def analyze_media(url: str)-> dict:
         "thumbnail": info.get("thumbnail"),
         "duration": info.get("duration"),
         "uploader": info.get("uploader"),
-        "formats": normalize_formats(info.get("formats", []))
+        "formats": formats
     }
     
     
