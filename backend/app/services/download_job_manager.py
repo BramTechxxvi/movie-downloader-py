@@ -67,6 +67,7 @@ class DownloadJobManager:
         
         job.status = DownloadStatus.FAILED
         job.error = error
+        job.completed_at = datetime.now(timezone.utc)
         
         return job 
     
