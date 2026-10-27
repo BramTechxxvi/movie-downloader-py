@@ -2,6 +2,7 @@ from yt_dlp import YoutubeDL
 from pathlib import Path
 from yt_dlp.utils import DownloadError
 from app.core.config import settings
+from typing import Callable
 
 
 
@@ -16,7 +17,13 @@ DOWNLOAD_DIR = settings.download_dir
 def download_media(
     url: str, format_id: str, media_type: str, 
     audio_format: str = "original", progress_hook=None)-> dict:
-    
+
+    if media_type not in {"video", "audio"}:
+        raise ValueError("Unsupported media type.")
+
+    if audio_format not in {"original", "mp3"}:
+        raise ValueError("Unsupported audio format.")
+        
     DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     if media_type == "video":
         selected_format = f"{format_id}+bestaudio/best"
@@ -27,7 +34,8 @@ def download_media(
         "format": selected_format,
         "quiet": True,
         "outtmpl": str(DOWNLOAD_DIR / "%(title)s.%(ext)s"),
-        "js_runtimes":{"node": {}}
+        "js_runtimes":{"node": {}},
+        "noplaylist": True
     }
     
     if progress_hook is not None:
