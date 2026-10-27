@@ -18,3 +18,5 @@ def analyze_media_route(request: AnalyzeMediaRequest,)-> AnalyzeMediaResponse:
         return AnalyzeMediaResponse(**metadata)
     except ValueError as error:
         raise HTTPException(status_code=400, detail=str(error))
+    except Exception as error:
+        raise HTTPException(status_code=500, detail="An unexpected error occured while analyzing media")
