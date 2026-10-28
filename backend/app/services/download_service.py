@@ -21,6 +21,9 @@ def download_media(
     url: str, format_id: str, media_type: str, 
     audio_format: str = "original", progress_hook: Callable | None=None)-> dict:
 
+    if not format_id or not format_id.strip():
+        raise ValueError("A valid format ID is required.")
+    
     if media_type not in {"video", "audio"}:
         raise ValueError("Unsupported media type.")
 
@@ -59,8 +62,17 @@ def download_media(
     try:
         with YoutubeDL(options) as ydl:
             info = ydl.extract_info(url, download=True)
+            
             if not info or not isinstance(info, dict):
                 raise MediaDownloadError("The provider returned invalid downoad information.")
+            
+            formats = info.get("formats") or []
+            selected = next((item for item in formats if item.get("format_id") == format_id), None)
+            if selected is None:
+                raise ValueError("The selected format is not available for this media.")
+            
+            vcodec = selected.get("vcodec")
+            acodec = selected.get("acodec")
             
             filepath = Path(ydl.prepare_filename(info))
             if media_type == "audio" and audio_format == "mp3":
