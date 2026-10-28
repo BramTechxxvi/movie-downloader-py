@@ -83,11 +83,10 @@ class DownloadJobManager:
         self, download_id: str, 
         filename: str, filepath: str )-> DownloadJOb |None:
         
-        job = self.get_job(download_id)
+        job = self._transition_job(download_id, DownloadStatus.DOWNLOADING)
         if job is None:
             return None
         
-        job.status = DownloadStatus.COMPLETED
         job.progress = 100.0
         job.filename = filename
         job.filepath = filepath
@@ -101,11 +100,10 @@ class DownloadJobManager:
         
         
     def fail_job(self, download_id: str, error: str)-> DownloadJOb |None:
-        job = self.get_job(download_id)
+        job = self._transition_job(download_id, DownloadStatus.FAILED)
         if job is None:
             return None
         
-        job.status = DownloadStatus.FAILED
         job.error = error
         job.completed_at = datetime.now(timezone.utc)
         
