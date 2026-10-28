@@ -66,22 +66,19 @@ def download_media(
             if media_type == "audio" and audio_format == "mp3":
                 filepath = filepath.with_suffix(".mp3")
             
-            elif media_type == "video" and info.get("requested_download", []):
+            elif media_type == "video" and info.get("requested_formats"):
                 filepath = filepath.with_suffix(".mp4")
                 
     except DownloadError as error:
-        raise ValueError("Unable to download media", error)
+        raise MediaDownloadError("Unable to download this media. It may be unavailable ",
+                                 "or the selected format may not br supported."
+        ) from error
     
-    requested_downloads = info.get("requested_downloads", [])
-    
-    if requested_downloads:
-        filepath = requested_downloads[0].get("filepath")
-    else:
-        filepath = ydl.prepare_filename(info)
+    if not filepath.is_file():
+        raise MediaDownloadError("The download finished without producing the expected file.")
         
-    path = Path(filepath)
     return {
         "status": "completed",
-        "filename": path.name,
-        "filepath": str(path)
+        "filename": filepath.name,
+        "filepath": str(filepath.resolve())
     }
