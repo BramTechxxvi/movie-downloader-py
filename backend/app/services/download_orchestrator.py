@@ -30,6 +30,7 @@ class DownloadOrchestrator:
         self, download_id: str, url: str, format_id: str,
         media_type: str, audio_format: str)-> None:
         
+        self.job_manager.start_job(download_id)
         progress_hook = create_progress_hook(
             manager=self.job_manager, download_id=download_id)
         
