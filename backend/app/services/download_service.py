@@ -3,7 +3,7 @@ from pathlib import Path
 from yt_dlp.utils import DownloadError
 from app.core.config import settings
 from typing import Callable
-
+from app.services.url_validation import validate_public_http_url
 
 
 
@@ -29,6 +29,8 @@ def download_media(
 
     if audio_format not in {"original", "mp3"}:
         raise ValueError("Unsupported audio format.")
+    
+    url = validate_public_http_url(url)
         
     DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     if media_type == "video":
@@ -100,6 +102,14 @@ def download_media(
         raise MediaDownloadError("Unable to download this media. It may be unavailable ",
                                  "or the selected format may not br supported."
         ) from error
+        
+    download_root = DOWNLOAD_DIR.resolve()
+    filepath = filepath.resolve()
+    
+    try:
+        filepath.relative_to(download_root)
+    except ValueError as error:
+        raise MediaDownloadError("The downloaded file is outside the permitted download directory.")from error
     
     if not filepath.is_file():
         raise MediaDownloadError("The download finished without producing the expected file.")
@@ -107,5 +117,5 @@ def download_media(
     return {
         "status": "completed",
         "filename": filepath.name,
-        "filepath": str(filepath.resolve())
+        "filepath": str(filepath)
     }
