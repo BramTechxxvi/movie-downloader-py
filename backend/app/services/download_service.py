@@ -74,7 +74,22 @@ def download_media(
             vcodec = selected.get("vcodec")
             acodec = selected.get("acodec")
             
-            filepath = Path(ydl.prepare_filename(info))
+            if media_type == "audio" and vcodec != "none" or acodec in (None, "none"):
+                raise ValueError("THe selected format is not an audio-only format.")
+            
+            if media_type == "video":
+                selected_format = (
+                    format_id 
+                    if acodec not in (None, "none")
+                    else f"{format_id}+bestaudio"
+                )
+            else:
+                selected_format = format_id
+                
+            ydl.params["format"] = selected_format 
+            downloaded_info = ydl.process_ie_result(info, download=True)
+            filepath = Path(ydl.prepare_filename(downloaded_info))
+            
             if media_type == "audio" and audio_format == "mp3":
                 filepath = filepath.with_suffix(".mp3")
             
