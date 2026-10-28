@@ -39,6 +39,11 @@ class DownloadJobManager:
     
     
     
+    
+    def start_job(self, download_id: str):
+        return self._transition_job(download_id, DownloadStatus.DOWNLOADING)   
+    
+    
 
     def create_job(self) -> DownloadJOb:
         download_id = str(uuid4())
@@ -62,9 +67,13 @@ class DownloadJobManager:
         if job is None:
             return None
         
-        job.status = DownloadStatus.DOWNLOADING
-        job.progress = progress
+        if job.status == DownloadStatus.PENDING:
+            job=self.start_job(download_id)
+            
+        elif job.status != DownloadStatus.DOWNLOADING:
+            raise ValueError(f"Cannot update progress for a job in state {job.status}")
         
+        job.progress = max(0.0, min(progress, 100.0))
         return job
     
     
