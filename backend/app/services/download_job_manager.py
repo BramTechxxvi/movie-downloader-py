@@ -36,6 +36,9 @@ class DownloadJobManager:
         
         job.status = new_status
         return job
+    
+    
+    
 
     def create_job(self) -> DownloadJOb:
         download_id = str(uuid4())
