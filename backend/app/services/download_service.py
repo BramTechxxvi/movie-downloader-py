@@ -33,11 +33,7 @@ def download_media(
     url = validate_public_http_url(url)
         
     DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
-    if media_type == "video":
-        selected_format = f"{format_id}+bestaudio/best"
-    else:
-        selected_format = format_id
-        
+ 
     options = {
         "format": selected_format,
         "quiet": True,
@@ -103,7 +99,7 @@ def download_media(
                 
     except DownloadError as error:
         raise MediaDownloadError(
-            "Unable to download this media. It may be unavailable ",
+            "Unable to download this media. It may be unavailable "
             "or the selected format may not br supported."
         ) from error
         
