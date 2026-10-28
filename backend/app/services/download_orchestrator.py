@@ -57,7 +57,7 @@ class DownloadOrchestrator:
                 "Check the URL and selected format, then try again."
             )
         except Exception:
-            logger.exception("UNexpected error while processing %s", download_id)
+            logger.exception("Unexpected error while processing %s", download_id)
             self.job_manager.fail_job(
                 download_id, 
                 "Unexpected error occurred while downloading this media."

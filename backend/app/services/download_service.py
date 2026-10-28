@@ -102,8 +102,9 @@ def download_media(
                 filepath = filepath.with_suffix(".mp4")
                 
     except DownloadError as error:
-        raise MediaDownloadError("Unable to download this media. It may be unavailable ",
-                                 "or the selected format may not br supported."
+        raise MediaDownloadError(
+            "Unable to download this media. It may be unavailable ",
+            "or the selected format may not br supported."
         ) from error
         
     download_root = DOWNLOAD_DIR.resolve()
