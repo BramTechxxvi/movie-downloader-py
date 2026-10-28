@@ -63,7 +63,7 @@ def download_media(
     
     try:
         with YoutubeDL(options) as ydl:
-            info = ydl.extract_info(url, download=True)
+            info = ydl.extract_info(url, download=False)
             
             if not info or not isinstance(info, dict):
                 raise MediaDownloadError("The provider returned invalid downoad information.")
@@ -76,7 +76,10 @@ def download_media(
             vcodec = selected.get("vcodec")
             acodec = selected.get("acodec")
             
-            if media_type == "audio" and vcodec != "none" or acodec in (None, "none"):
+            if media_type == "audio" and (
+                vcodec not in (None, "none")
+                or acodec in (None, "none")
+            ):
                 raise ValueError("THe selected format is not an audio-only format.")
             
             if media_type == "video":

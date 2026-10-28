@@ -7,7 +7,35 @@ from datetime import datetime, timezone
 class DownloadJobManager:
     def __init__(self):
         self._jobs: dict[str, DownloadJOb] = {}
+        
     
+    _ALLOWED_TRANSITIONS = {
+        DownloadStatus.PENDING: {
+            DownloadStatus.DOWNLOADING, DownloadStatus.FAILED,
+        },
+        DownloadStatus.DOWNLOADING: {
+            DownloadStatus.COMPLETED, DownloadStatus.FAILED,
+        },
+        DownloadStatus.COMPLETED: set(),
+        DownloadStatus.FAILED: set()
+    }
+    
+    
+    
+    def _transition_job(self, download_id: str, new_status: DownloadStatus):
+        job = self.get_job(download_id)
+        if job is None:
+            return None
+        
+        allowed_statuses = self._ALLOWED_TRANSITIONS[job.status]
+        if new_status not in allowed_statuses:
+            raise ValueError(
+                f"Invalid download state transition: "
+                f"{job.status} -> {new_status}"
+            )
+        
+        job.status = new_status
+        return job
 
     def create_job(self) -> DownloadJOb:
         download_id = str(uuid4())
