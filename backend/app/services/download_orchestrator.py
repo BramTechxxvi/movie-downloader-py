@@ -1,4 +1,4 @@
-from app.services.download_service import download_media
+from app.services.download_service import download_media, MediaDownloadError
 from app.services.download_progress import create_progress_hook
 from app.services.download_job_manager import download_job_manager
 import logging
@@ -43,6 +43,12 @@ class DownloadOrchestrator:
                 filename=result["filename"],
                 filepath=result["filepath"],
             )
+        except MediaDownloadError as error:
+            logger.warning("Download %s failed: %s", download_id, error)
+            self.job_manager.fail_job(
+                download_id, str(error)
+            )
+        
         except ValueError as error:
             logger.warning("Download %s failed: %s", download_id, error)
             self.job_manager.fail_job(
