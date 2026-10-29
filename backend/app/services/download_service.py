@@ -31,9 +31,9 @@ def download_media(
         raise ValueError("Unsupported audio format.")
     
     url = validate_public_http_url(url)
-        
     DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
- 
+    selected_format = format_id
+    
     options = {
         "format": selected_format,
         "quiet": True,
@@ -76,7 +76,7 @@ def download_media(
                 vcodec not in (None, "none")
                 or acodec in (None, "none")
             ):
-                raise ValueError("THe selected format is not an audio-only format.")
+                raise ValueError("The selected format is not an audio-only format.")
             
             if media_type == "video":
                 selected_format = (
@@ -100,7 +100,7 @@ def download_media(
     except DownloadError as error:
         raise MediaDownloadError(
             "Unable to download this media. It may be unavailable "
-            "or the selected format may not br supported."
+            "or the selected format may not be supported."
         ) from error
         
     download_root = DOWNLOAD_DIR.resolve()
