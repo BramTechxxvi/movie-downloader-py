@@ -114,14 +114,27 @@ export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
                         key={format.format_id}
                         type="button"
                         onClick={()=> selectFormat(format)}
-                    className="rounded-xl border border-gray-200 p-4 text-left transition hover:border-black"
-                    >
-                        <p className="font-medium">
-                            {format.resolution ?? "Audio"};
-                        </p>
-                        <p className="text-sm text-gray-500">
-                            {format.extension.toUpperCase()};
-                        </p>
+                        className={`rounded-xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                            selectedFormat?.format_id === format.format_id
+                            ? "border-blue-600 bg-blue-50 ring-1 ring-blue-600"
+                            : "border-gray-200 hover:border-gray-400"
+                        }`}>
+                            <div className="flex items-start justify-between gap-3">
+                                <div>
+                                    <p className="font-medium">
+                                        {format.resolution ?? "Audio"}
+                                    </p>
+                                    <p className="text-sm text-gray-500">
+                                        {format.extension.toUpperCase()}
+                                    </p>
+                                </div>
+                                
+                                {selectedFormat?.format_id === format.format_id && (
+                                    <span className="text-sm font-semibold text-blue-700">
+                                        Selected ✓
+                                    </span>
+                                )}
+                            </div>
                     </button>
                 ))}
             </div>
