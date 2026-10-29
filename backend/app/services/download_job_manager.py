@@ -41,7 +41,7 @@ class DownloadJobManager:
     
     
     def start_job(self, download_id: str):
-        return self._transition_job(download_id, DownloadStatus.COMPLETED)   
+        return self._transition_job(download_id, DownloadStatus.DOWNLOADING)   
     
     
 
@@ -83,7 +83,7 @@ class DownloadJobManager:
         self, download_id: str, 
         filename: str, filepath: str )-> DownloadJOb |None:
         
-        job = self._transition_job(download_id, DownloadStatus.DOWNLOADING)
+        job = self._transition_job(download_id, DownloadStatus.COMPLETED)
         if job is None:
             return None
         
