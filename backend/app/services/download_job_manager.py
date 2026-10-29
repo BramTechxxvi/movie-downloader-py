@@ -41,7 +41,7 @@ class DownloadJobManager:
     
     
     def start_job(self, download_id: str):
-        return self._transition_job(download_id, DownloadStatus.DOWNLOADING)   
+        return self._transition_job(download_id, DownloadStatus.COMPLETED)   
     
     
 
