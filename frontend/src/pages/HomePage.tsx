@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { analyzeMedia, startDownload } from '../api/mediaApi'
-import { Navbar } from '../components/Navbar'
 import { UrlInput } from '../components/UrlInput'
 import { MediaPreview } from '../components/MediaPreview'
 import { FormatSelector, type FormatSelection } from '../components/FormatSelector'
@@ -64,7 +63,7 @@ export function HomePage() {
     }
   }
 
-  
+
   function handleRetry() {
     setDownloadId(null)
     setError(null)
