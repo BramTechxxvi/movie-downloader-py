@@ -8,6 +8,10 @@ import { FormatSelector, type FormatSelection } from "../components/FormatSelect
 import { useDownloadStatus } from "../hooks/useDownloadStatus";
 import { DownloadProgress } from "../components/DownloadProgress";
 
+
+
+
+
 export function HomePage() {
   const [media, setMedia] = useState<MediaAnalysis | null>(null);
   const [loading, setLoading] = useState(false);
