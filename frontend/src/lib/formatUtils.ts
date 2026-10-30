@@ -172,7 +172,9 @@ export function groupAudioFormats(
   // the actual conversion is handled server-side via the audioFormat field.
   if (supportsMP3Conversion && unique.length > 0) {
     const mp3Option: AudioOption = {
-      format: { ...unique[0], extension: 'mp3' },
+      // Give the synthetic entry a stable, distinct format_id so React key
+      // never collides with the source audio format's own format_id.
+      format: { ...unique[0], format_id: `${unique[0].format_id}__mp3`, extension: 'mp3' },
       label: 'MP3',
       description: 'Universal compatibility',
       isDefault: true,

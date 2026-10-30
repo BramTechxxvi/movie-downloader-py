@@ -1,147 +1,158 @@
-import { useState } from "react";
-import { ArrowDownToLine, Loader2, Sparkles } from "lucide-react";
-import { analyzeMedia, startDownload } from "../api/mediaApi";
-import { MediaPreview } from "../components/MediaPreview";
-import { UrlInput } from "../components/UrlInput";
-import type { MediaAnalysis } from "../types/media";
-import { FormatSelector, type FormatSelection } from "../components/FormatSelector";
-import { useDownloadStatus } from "../hooks/useDownloadStatus";
-import { DownloadProgress } from "../components/DownloadProgress";
-
-
-
-
+import { useState } from 'react'
+import { AlertCircle } from 'lucide-react'
+import { analyzeMedia, startDownload } from '../api/mediaApi'
+import { Navbar } from '../components/Navbar'
+import { UrlInput } from '../components/UrlInput'
+import { MediaPreview } from '../components/MediaPreview'
+import { FormatSelector, type FormatSelection } from '../components/FormatSelector'
+import { DownloadButton } from '../components/DownloadButton'
+import { DownloadProgress } from '../components/DownloadProgress'
+import { useDownloadStatus } from '../hooks/useDownloadStatus'
+import type { MediaAnalysis } from '../types/media'
 
 export function HomePage() {
-  const [media, setMedia] = useState<MediaAnalysis | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [selection, setSelection] = useState<FormatSelection | null>(null);
-  const [currentUrl, setCurrentUrl] = useState<string | null>(null);
-  const [downloadId, setDownloadId] = useState<string | null>(null);
-  const [startingDownload, setStartingDownload] = useState(false);
-  const downloadStatus = useDownloadStatus(downloadId);
+  // ── State (identical to original) ───────────────────────────────────────
+  const [media, setMedia] = useState<MediaAnalysis | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [selection, setSelection] = useState<FormatSelection | null>(null)
+  const [currentUrl, setCurrentUrl] = useState<string | null>(null)
+  const [downloadId, setDownloadId] = useState<string | null>(null)
+  const [startingDownload, setStartingDownload] = useState(false)
+
+  const downloadStatus = useDownloadStatus(downloadId)
+
+  // ── Handlers (identical logic to original) ───────────────────────────────
 
   async function handleAnalyze(url: string) {
     try {
-      setLoading(true);
-      setError(null);
-      setMedia(null);
-      setSelection(null);
-      setDownloadId(null);
-      const result = await analyzeMedia(url);
-      setMedia(result);
-      setCurrentUrl(url);
+      setLoading(true)
+      setError(null)
+      setMedia(null)
+      setSelection(null)
+      setDownloadId(null)
+      const result = await analyzeMedia(url)
+      setMedia(result)
+      setCurrentUrl(url)
     } catch {
-      setError("Unable to analyze this URL. Check the link and try again.");
+      setError('Unable to analyze this URL. Check that it\'s publicly accessible and try again.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
   async function handleDownload() {
-    if (!selection || !currentUrl) return;
+    if (!selection || !currentUrl) return
     try {
-      setStartingDownload(true);
-      setError(null);
+      setStartingDownload(true)
+      setError(null)
       const result = await startDownload({
         url: currentUrl,
         formatId: selection.format.format_id,
         mediaType: selection.format.type,
         audioFormat: selection.audioFormat,
-      });
-      setDownloadId(result.download_id);
+      })
+      setDownloadId(result.download_id)
     } catch {
-      setError("Unable to start download. Please try again.");
+      setError('Unable to start download. Please try again.')
     } finally {
-      setStartingDownload(false);
+      setStartingDownload(false)
     }
   }
 
+  function handleRetry() {
+    setDownloadId(null)
+    setError(null)
+  }
+
+  // ── Render ───────────────────────────────────────────────────────────────
+
   return (
-    <div className="bg-mesh min-h-screen">
-      <main className="mx-auto max-w-2xl px-4 py-16 sm:py-24">
-        {/* ── Hero ──────────────────────────────────────────────────── */}
-        <header className="mb-10 space-y-3 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-500/30 bg-brand-600/10 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-widest text-brand-400">
-            <Sparkles size={11} aria-hidden="true" />
-            Media Downloader
-          </div>
+    <div className="page-bg">
+      <Navbar />
 
-          <h1 className="text-4xl font-extrabold tracking-tight text-slate-50 sm:text-5xl">
-            Download anything,{" "}
-            <span className="bg-gradient-to-r from-brand-400 to-violet-400 bg-clip-text text-transparent">
-              instantly
-            </span>
+      <main id="main-content" className="mx-auto max-w-3xl px-4 pb-20 pt-12 sm:px-6 sm:pt-16">
+        {/* ── Hero ──────────────────────────────────────────────── */}
+        <section className="mb-10 text-center sm:mb-12" aria-label="Introduction">
+          <h1 className="mb-3 text-3xl font-extrabold tracking-tight text-slate-50 sm:text-4xl">
+            Your media.{' '}
+            <span className="text-brand-400">Your format.</span>{' '}
+            Your choice.
           </h1>
-
-          <p className="mx-auto max-w-sm text-base text-slate-400">
-            Paste a supported media URL to inspect available formats and grab
-            exactly what you need.
+          <p className="mx-auto max-w-md text-[0.9375rem] leading-relaxed text-slate-400">
+            Analyze supported media links and download in the format and
+            quality that work for you.
           </p>
-        </header>
+        </section>
 
-        {/* ── Content stack ─────────────────────────────────────────── */}
-        <div className="space-y-4">
-          {/* URL input */}
-          <UrlInput onAnalyze={handleAnalyze} loading={loading} />
+        {/* ── URL input ─────────────────────────────────────────── */}
+        <UrlInput onAnalyze={handleAnalyze} loading={loading} />
 
-          {/* Error */}
-          {error && (
-            <div className="animate-fade-up flex items-start gap-3 rounded-xl border border-red-800/40 bg-red-950/40 px-4 py-3 text-sm text-red-300">
-              <span className="mt-0.5 shrink-0 text-base leading-none" aria-hidden="true">⚠</span>
-              {error}
+        {/* ── Skeleton while analyzing ──────────────────────────── */}
+        {loading && (
+          <div className="mt-4 space-y-3" aria-busy="true" aria-label="Analyzing link">
+            <div className="card flex gap-4 p-4">
+              <div className="skeleton h-20 w-32 rounded-lg sm:h-24 sm:w-40" />
+              <div className="flex flex-1 flex-col justify-center gap-2.5">
+                <div className="skeleton h-3 w-20 rounded" />
+                <div className="skeleton h-4 w-full rounded" />
+                <div className="skeleton h-3 w-2/3 rounded" />
+              </div>
             </div>
-          )}
+            <div className="card p-5 space-y-3">
+              <div className="skeleton h-3 w-16 rounded" />
+              <div className="flex gap-2">
+                <div className="skeleton h-20 flex-1 rounded-xl" />
+                <div className="skeleton h-20 flex-1 rounded-xl" />
+              </div>
+            </div>
+          </div>
+        )}
 
-          {/* Media preview */}
-          {media && <MediaPreview media={media} />}
+        {/* ── API / network error ───────────────────────────────── */}
+        {error && !loading && (
+          <div
+            role="alert"
+            className="animate-fade-up mt-4 flex items-start gap-3 rounded-xl border border-red-800/40 bg-red-950/30 px-4 py-3.5 text-sm text-red-300"
+          >
+            <AlertCircle size={16} className="mt-0.5 shrink-0 text-red-400" aria-hidden="true" />
+            {error}
+          </div>
+        )}
 
-          {/* Format selector */}
-          {media && (
+        {/* ── Results ───────────────────────────────────────────── */}
+        {!loading && media && (
+          <div className="mt-4 space-y-3">
+            <MediaPreview media={media} />
             <FormatSelector formats={media.formats} onSelect={setSelection} />
-          )}
 
-          {/* Download trigger */}
-          {selection && !downloadId && (
-            <button
-              type="button"
-              onClick={handleDownload}
-              disabled={startingDownload}
-              className="
-                animate-fade-up w-full inline-flex items-center justify-center gap-2
-                rounded-2xl bg-brand-600 px-6 py-4
-                text-base font-semibold text-white
-                shadow-lg shadow-brand-900/40
-                transition-all duration-200
-                hover:bg-brand-500 active:scale-[0.98]
-                disabled:cursor-not-allowed disabled:opacity-50
-                focus-ring
-              "
-            >
-              {startingDownload ? (
-                <>
-                  <Loader2 size={17} className="animate-spin" aria-hidden="true" />
-                  Starting download…
-                </>
-              ) : (
-                <>
-                  <ArrowDownToLine size={17} aria-hidden="true" />
-                  Download
-                </>
-              )}
-            </button>
-          )}
+            {/* Download action — hidden once job is started */}
+            {selection && !downloadId && (
+              <DownloadButton
+                selection={selection}
+                loading={startingDownload}
+                onClick={handleDownload}
+              />
+            )}
 
-          {/* Progress */}
-          {downloadStatus && <DownloadProgress status={downloadStatus} />}
-        </div>
+            {/* Progress / completion */}
+            {downloadStatus && (
+              <DownloadProgress
+                status={downloadStatus}
+                onRetry={downloadStatus.status === 'failed' ? handleRetry : undefined}
+              />
+            )}
+          </div>
+        )}
+
+        {/* ── Supported sources note ────────────────────────────── */}
+        {!media && !loading && (
+          <p className="mt-6 text-center text-xs text-slate-600">
+            Works with YouTube, Vimeo, SoundCloud, and other supported platforms.
+            Only download content you have the right to use.
+          </p>
+        )}
       </main>
-
-      {/* ── Footer ────────────────────────────────────────────────── */}
-      <footer className="pb-8 text-center text-xs text-slate-600">
-        Only download content you have the right to use.
-      </footer>
     </div>
-  );
+  )
 }

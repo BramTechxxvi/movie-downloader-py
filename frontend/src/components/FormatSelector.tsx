@@ -1,180 +1,291 @@
-import { useMemo, useState } from "react";
-import { CheckCircle2, Film, Music } from "lucide-react";
-import type { MediaFormat } from "../types/media";
+import { useMemo, useState } from 'react'
+import { Film, Music, ChevronDown, ChevronUp, Check } from 'lucide-react'
+import type { MediaFormat } from '../types/media'
+import {
+  groupVideoFormats,
+  groupAudioFormats,
+  type VideoOption,
+  type AudioOption,
+} from '../lib/formatUtils'
 
+// ── Public contract (unchanged from original) ────────────────────────────────
 export interface FormatSelection {
-  format: MediaFormat;
-  audioFormat: "original" | "mp3";
+  format: MediaFormat
+  audioFormat: 'original' | 'mp3'
 }
 
 interface FormatSelectorProps {
-  formats: MediaFormat[];
-  onSelect: (selection: FormatSelection | null) => void;
+  formats: MediaFormat[]
+  onSelect: (selection: FormatSelection | null) => void
 }
 
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+/** Does the backend support MP3 conversion for this media? */
+function detectMP3Support(formats: MediaFormat[]): boolean {
+  // The backend accepts audioFormat="mp3" for any audio track.
+  // We surface this option whenever audio tracks exist.
+  return formats.some((f) => f.type === 'audio')
+}
+
+// ── Component ────────────────────────────────────────────────────────────────
+
 export function FormatSelector({ formats, onSelect }: FormatSelectorProps) {
-  const [mediaType, setMediaType] = useState<"video" | "audio">("video");
-  const [audioFormat, setAudioFormat] = useState<"original" | "mp3">("original");
-  const [selectedFormat, setSelectedFormat] = useState<MediaFormat | null>(null);
+  const [mediaType, setMediaType] = useState<'video' | 'audio'>('video')
+  const [selectedVideoOption, setSelectedVideoOption] = useState<VideoOption | null>(null)
+  const [selectedAudioOption, setSelectedAudioOption] = useState<AudioOption | null>(null)
+  const [showAdvanced, setShowAdvanced] = useState(false)
 
-  const filteredFormats = useMemo(
-    () => formats.filter((f) => f.type === mediaType),
-    [formats, mediaType],
-  );
+  const supportsMP3 = useMemo(() => detectMP3Support(formats), [formats])
 
-  function selectFormat(format: MediaFormat) {
-    setSelectedFormat(format);
-    onSelect({ format, audioFormat });
-  }
+  const videoOptions = useMemo(() => groupVideoFormats(formats), [formats])
+  const audioOptions = useMemo(
+    () => groupAudioFormats(formats, supportsMP3),
+    [formats, supportsMP3],
+  )
 
-  function changeAudioFormat(value: "original" | "mp3") {
-    setAudioFormat(value);
-    if (selectedFormat) {
-      onSelect({ format: selectedFormat, audioFormat: value });
+  // ── Auto-select sensible defaults when options first appear ──────────────
+
+  const defaultVideoOption = videoOptions[0] ?? null
+  const defaultAudioOption = audioOptions.find((o) => o.isDefault) ?? audioOptions[0] ?? null
+
+  // Primary visible options — cap at 4 unless advanced is open
+  const VISIBLE_VIDEO_LIMIT = 4
+  const visibleVideoOptions = showAdvanced
+    ? videoOptions
+    : videoOptions.slice(0, VISIBLE_VIDEO_LIMIT)
+  const hasHiddenVideoOptions = videoOptions.length > VISIBLE_VIDEO_LIMIT
+
+  // ── Handlers ─────────────────────────────────────────────────────────────
+
+  function handleMediaTypeChange(type: 'video' | 'audio') {
+    if (type === mediaType) return
+    setMediaType(type)
+    onSelect(null)
+
+    // Re-apply the default for the newly selected type
+    if (type === 'video' && defaultVideoOption) {
+      setSelectedVideoOption(defaultVideoOption)
+      onSelect({ format: defaultVideoOption.format, audioFormat: 'original' })
+    } else if (type === 'audio' && defaultAudioOption) {
+      setSelectedAudioOption(defaultAudioOption)
+      const audioFmt = defaultAudioOption.format.extension === 'mp3' ? 'mp3' : 'original'
+      onSelect({ format: defaultAudioOption.format, audioFormat: audioFmt })
     }
   }
 
-  function changeMediaType(type: "video" | "audio") {
-    if (type === mediaType) return;
-    setMediaType(type);
-    setSelectedFormat(null);
-    onSelect(null);
+  function handleSelectVideo(option: VideoOption) {
+    setSelectedVideoOption(option)
+    onSelect({ format: option.format, audioFormat: 'original' })
   }
 
+  function handleSelectAudio(option: AudioOption) {
+    setSelectedAudioOption(option)
+    const audioFmt = option.format.extension === 'mp3' ? 'mp3' : 'original'
+    onSelect({ format: option.format, audioFormat: audioFmt })
+  }
+
+  // Apply default selection on first render if none selected yet
+  const activeVideo = selectedVideoOption ?? defaultVideoOption
+  const activeAudio = selectedAudioOption ?? defaultAudioOption
+
+  // Propagate defaults to parent on first paint (only once, via useMemo side-effect
+  // is inappropriate — we handle this in the parent's handleAnalyze reset instead;
+  // see note in HomePage). The parent reads `selection` only when the button is
+  // clicked, so defaults applied via click-handlers are sufficient.
+
+  // ── Render ───────────────────────────────────────────────────────────────
+
   return (
-    <section className="animate-fade-up space-y-5 rounded-2xl glass-card p-5">
+    <section
+      className="animate-fade-up card p-5 space-y-5"
+      aria-label="Format selector"
+    >
       {/* ── Type toggle ───────────────────────────────────────────── */}
-      <div
-        role="tablist"
-        aria-label="Media type"
-        className="inline-flex rounded-xl bg-slate-800/60 p-1 gap-1"
-      >
-        {(["video", "audio"] as const).map((type) => {
-          const Icon = type === "video" ? Film : Music;
-          const active = mediaType === type;
+      <div className="flex gap-2" role="group" aria-label="Download type">
+        {(
+          [
+            { type: 'video', Icon: Film, label: 'Video', desc: 'Download with visuals' },
+            { type: 'audio', Icon: Music, label: 'Audio', desc: 'Audio track only' },
+          ] as const
+        ).map(({ type, Icon, label, desc }) => {
+          const active = mediaType === type
           return (
             <button
               key={type}
-              role="tab"
               type="button"
-              aria-selected={active}
-              onClick={() => changeMediaType(type)}
-              className={`
-                inline-flex items-center gap-2 rounded-lg px-4 py-2
-                text-sm font-semibold capitalize transition-all duration-200
-                focus-ring
-                ${
-                  active
-                    ? "bg-brand-600 text-white shadow-md shadow-brand-900/40"
-                    : "text-slate-400 hover:text-slate-200"
-                }
-              `}
+              role="radio"
+              aria-checked={active}
+              onClick={() => handleMediaTypeChange(type)}
+              className={`focus-ring flex flex-1 items-start gap-3 rounded-xl border p-3.5 text-left transition-all duration-150 sm:p-4 ${
+                active
+                  ? 'border-brand-600 bg-brand-900/30 text-slate-100'
+                  : 'border-slate-700/60 bg-slate-800/30 text-slate-400 hover:border-slate-600 hover:text-slate-300'
+              }`}
             >
-              <Icon size={14} aria-hidden="true" />
-              {type}
+              <span
+                className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                  active ? 'bg-brand-600 text-white' : 'bg-slate-700/60 text-slate-500'
+                }`}
+              >
+                <Icon size={15} aria-hidden="true" />
+              </span>
+              <span>
+                <span className="block text-sm font-semibold">{label}</span>
+                <span className="mt-0.5 block text-xs text-slate-500">{desc}</span>
+              </span>
+              {active && (
+                <Check
+                  size={14}
+                  className="ml-auto mt-0.5 shrink-0 text-brand-400"
+                  aria-hidden="true"
+                />
+              )}
             </button>
-          );
+          )
         })}
       </div>
 
-      {/* ── Audio output selector ──────────────────────────────────── */}
-      {mediaType === "audio" && (
-        <fieldset className="space-y-2">
-          <legend className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">
-            Output format
-          </legend>
-          <div className="flex flex-wrap gap-3">
-            {(["original", "mp3"] as const).map((value) => {
-              const checked = audioFormat === value;
-              return (
-                <label
-                  key={value}
-                  className={`
-                    inline-flex cursor-pointer items-center gap-2.5 rounded-xl border px-4 py-2.5
-                    text-sm font-medium transition-all duration-200
-                    ${
-                      checked
-                        ? "border-brand-500 bg-brand-600/15 text-brand-300"
-                        : "border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200"
-                    }
-                  `}
+      {/* ── Video quality grid ────────────────────────────────────── */}
+      {mediaType === 'video' && (
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+            Quality
+          </p>
+
+          {videoOptions.length === 0 ? (
+            <p className="rounded-lg bg-slate-800/50 py-4 text-center text-sm text-slate-500">
+              No video formats available
+            </p>
+          ) : (
+            <>
+              <div
+                className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+                role="radiogroup"
+                aria-label="Video quality"
+              >
+                {visibleVideoOptions.map((opt) => {
+                  const active = activeVideo?.format.format_id === opt.format.format_id
+                  return (
+                    <button
+                      key={opt.format.format_id}
+                      type="button"
+                      role="radio"
+                      aria-checked={active}
+                      onClick={() => handleSelectVideo(opt)}
+                      className={`focus-ring relative rounded-xl border px-3 py-3 text-left transition-all duration-150 ${
+                        active
+                          ? 'border-brand-500 bg-brand-900/30 text-slate-100'
+                          : 'border-slate-700/60 bg-slate-800/20 text-slate-400 hover:border-slate-600 hover:text-slate-300'
+                      }`}
+                    >
+                      {opt.isBest && (
+                        <span className="mb-1 block text-[0.625rem] font-bold uppercase tracking-widest text-brand-400">
+                          Best
+                        </span>
+                      )}
+                      <span className="block text-sm font-semibold leading-tight">
+                        {opt.qualityLabel}
+                      </span>
+                      <span className="mt-0.5 block text-xs uppercase text-slate-500">
+                        {opt.format.extension}
+                      </span>
+                      {active && (
+                        <Check
+                          size={12}
+                          className="absolute right-2.5 top-2.5 text-brand-400"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* Advanced toggle — only shown when there are hidden formats */}
+              {hasHiddenVideoOptions && (
+                <button
+                  type="button"
+                  onClick={() => setShowAdvanced((v) => !v)}
+                  className="focus-ring inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300"
+                  aria-expanded={showAdvanced}
                 >
-                  <input
-                    type="radio"
-                    name="audioFormat"
-                    value={value}
-                    checked={checked}
-                    onChange={() => changeAudioFormat(value)}
-                    className="sr-only"
-                  />
-                  <span
-                    className={`
-                      flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2
-                      transition-colors duration-200
-                      ${checked ? "border-brand-500 bg-brand-500" : "border-slate-600"}
-                    `}
-                  >
-                    {checked && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                    )}
-                  </span>
-                  {value === "original" ? "Original" : "MP3"}
-                </label>
-              );
-            })}
-          </div>
-        </fieldset>
+                  {showAdvanced ? (
+                    <>
+                      <ChevronUp size={13} aria-hidden="true" />
+                      Show fewer formats
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown size={13} aria-hidden="true" />
+                      {videoOptions.length - VISIBLE_VIDEO_LIMIT} more format
+                      {videoOptions.length - VISIBLE_VIDEO_LIMIT !== 1 ? 's' : ''}
+                    </>
+                  )}
+                </button>
+              )}
+            </>
+          )}
+        </div>
       )}
 
-      {/* ── Format grid ───────────────────────────────────────────── */}
-      {filteredFormats.length === 0 ? (
-        <p className="rounded-xl bg-slate-800/50 py-6 text-center text-sm text-slate-500">
-          No {mediaType} formats available
-        </p>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {filteredFormats.map((format) => {
-            const active = selectedFormat?.format_id === format.format_id;
-            return (
-              <button
-                key={format.format_id}
-                type="button"
-                onClick={() => selectFormat(format)}
-                className={`
-                  group relative rounded-xl border p-4 text-left
-                  transition-all duration-200 focus-ring
-                  ${
-                    active
-                      ? "border-brand-500 bg-brand-600/10 shadow-[0_0_0_1px_rgba(99,102,241,0.5)]"
-                      : "border-slate-700/60 bg-slate-800/30 hover:border-slate-600 hover:bg-slate-800/60"
-                  }
-                `}
-              >
-                {/* selected check */}
-                {active && (
-                  <CheckCircle2
-                    size={16}
-                    className="absolute right-3 top-3 text-brand-400"
-                    aria-hidden="true"
-                  />
-                )}
+      {/* ── Audio format list ─────────────────────────────────────── */}
+      {mediaType === 'audio' && (
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+            Format
+          </p>
 
-                <p
-                  className={`font-semibold text-sm ${
-                    active ? "text-brand-300" : "text-slate-200"
-                  }`}
-                >
-                  {format.resolution ?? "Audio"}
-                </p>
-
-                <p className="mt-0.5 text-xs text-slate-500 uppercase tracking-wide">
-                  {format.extension}
-                </p>
-              </button>
-            );
-          })}
+          {audioOptions.length === 0 ? (
+            <p className="rounded-lg bg-slate-800/50 py-4 text-center text-sm text-slate-500">
+              No audio formats available
+            </p>
+          ) : (
+            <div
+              className="grid grid-cols-2 gap-2 sm:grid-cols-3"
+              role="radiogroup"
+              aria-label="Audio format"
+            >
+              {audioOptions.map((opt) => {
+                const active = activeAudio?.format.format_id === opt.format.format_id
+                return (
+                  <button
+                    key={opt.format.format_id}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => handleSelectAudio(opt)}
+                    className={`focus-ring relative rounded-xl border px-3 py-3 text-left transition-all duration-150 ${
+                      active
+                        ? 'border-brand-500 bg-brand-900/30 text-slate-100'
+                        : 'border-slate-700/60 bg-slate-800/20 text-slate-400 hover:border-slate-600 hover:text-slate-300'
+                    }`}
+                  >
+                    {opt.isDefault && (
+                      <span className="mb-1 block text-[0.625rem] font-bold uppercase tracking-widest text-brand-400">
+                        Recommended
+                      </span>
+                    )}
+                    <span className="block text-sm font-semibold leading-tight">
+                      {opt.label}
+                    </span>
+                    <span className="mt-0.5 block text-xs text-slate-500">
+                      {opt.description}
+                    </span>
+                    {active && (
+                      <Check
+                        size={12}
+                        className="absolute right-2.5 top-2.5 text-brand-400"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
       )}
     </section>
-  );
+  )
 }
