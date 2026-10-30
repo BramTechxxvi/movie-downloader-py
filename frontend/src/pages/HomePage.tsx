@@ -72,8 +72,6 @@ export function HomePage() {
 
   return (
     <div className="page-bg">
-      <Navbar />
-
       <main id="main-content" className="mx-auto max-w-3xl px-4 pb-20 pt-12 sm:px-6 sm:pt-16">
         <section className="mb-10 text-center sm:mb-12" aria-label="Introduction">
           <h1 className="mb-3 text-3xl font-extrabold tracking-tight text-slate-50 sm:text-4xl">
