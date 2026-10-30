@@ -10,19 +10,22 @@ import { DownloadProgress } from '../components/DownloadProgress'
 import { useDownloadStatus } from '../hooks/useDownloadStatus'
 import type { MediaAnalysis } from '../types/media'
 
+
+
+
+
+
 export function HomePage() {
-  // ── State (identical to original) ───────────────────────────────────────
   const [media, setMedia] = useState<MediaAnalysis | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+ 
   const [selection, setSelection] = useState<FormatSelection | null>(null)
   const [currentUrl, setCurrentUrl] = useState<string | null>(null)
   const [downloadId, setDownloadId] = useState<string | null>(null)
   const [startingDownload, setStartingDownload] = useState(false)
-
   const downloadStatus = useDownloadStatus(downloadId)
 
-  // ── Handlers (identical logic to original) ───────────────────────────────
 
   async function handleAnalyze(url: string) {
     try {
@@ -40,6 +43,7 @@ export function HomePage() {
       setLoading(false)
     }
   }
+
 
   async function handleDownload() {
     if (!selection || !currentUrl) return
@@ -60,19 +64,18 @@ export function HomePage() {
     }
   }
 
+  
   function handleRetry() {
     setDownloadId(null)
     setError(null)
   }
 
-  // ── Render ───────────────────────────────────────────────────────────────
 
   return (
     <div className="page-bg">
       <Navbar />
 
       <main id="main-content" className="mx-auto max-w-3xl px-4 pb-20 pt-12 sm:px-6 sm:pt-16">
-        {/* ── Hero ──────────────────────────────────────────────── */}
         <section className="mb-10 text-center sm:mb-12" aria-label="Introduction">
           <h1 className="mb-3 text-3xl font-extrabold tracking-tight text-slate-50 sm:text-4xl">
             Your media.{' '}
@@ -85,10 +88,8 @@ export function HomePage() {
           </p>
         </section>
 
-        {/* ── URL input ─────────────────────────────────────────── */}
         <UrlInput onAnalyze={handleAnalyze} loading={loading} />
 
-        {/* ── Skeleton while analyzing ──────────────────────────── */}
         {loading && (
           <div className="mt-4 space-y-3" aria-busy="true" aria-label="Analyzing link">
             <div className="card flex gap-4 p-4">
@@ -109,7 +110,6 @@ export function HomePage() {
           </div>
         )}
 
-        {/* ── API / network error ───────────────────────────────── */}
         {error && !loading && (
           <div
             role="alert"
@@ -120,13 +120,11 @@ export function HomePage() {
           </div>
         )}
 
-        {/* ── Results ───────────────────────────────────────────── */}
         {!loading && media && (
           <div className="mt-4 space-y-3">
             <MediaPreview media={media} />
             <FormatSelector formats={media.formats} onSelect={setSelection} />
 
-            {/* Download action — hidden once job is started */}
             {selection && !downloadId && (
               <DownloadButton
                 selection={selection}
@@ -135,7 +133,6 @@ export function HomePage() {
               />
             )}
 
-            {/* Progress / completion */}
             {downloadStatus && (
               <DownloadProgress
                 status={downloadStatus}
@@ -145,7 +142,6 @@ export function HomePage() {
           </div>
         )}
 
-        {/* ── Supported sources note ────────────────────────────── */}
         {!media && !loading && (
           <p className="mt-6 text-center text-xs text-slate-600">
             Works with YouTube, Vimeo, SoundCloud, and other supported platforms.
