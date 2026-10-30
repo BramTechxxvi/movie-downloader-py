@@ -5,8 +5,8 @@ import {
   groupVideoFormats,
   groupAudioFormats,
   downloadButtonLabel,
-} from '../lib/formatUtils'
-import type { MediaFormat } from '../types/media'
+} from '../src/lib/formatUtils'
+import type { MediaFormat } from '../src/types/media'
 
 // ---------------------------------------------------------------------------
 // Helpers
