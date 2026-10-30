@@ -1,144 +1,180 @@
 import { useMemo, useState } from "react";
-import type { MediaFormat } from "../types/media"
+import { CheckCircle2, Film, Music } from "lucide-react";
+import type { MediaFormat } from "../types/media";
 
-
-
-
-
-
-export interface FormatSelection{
-    format: MediaFormat;
-    audioFormat: "original" | "mp3"
+export interface FormatSelection {
+  format: MediaFormat;
+  audioFormat: "original" | "mp3";
 }
-
 
 interface FormatSelectorProps {
-    formats: MediaFormat[];
-    onSelect: (selection: FormatSelection | null)=> void;
+  formats: MediaFormat[];
+  onSelect: (selection: FormatSelection | null) => void;
 }
 
+export function FormatSelector({ formats, onSelect }: FormatSelectorProps) {
+  const [mediaType, setMediaType] = useState<"video" | "audio">("video");
+  const [audioFormat, setAudioFormat] = useState<"original" | "mp3">("original");
+  const [selectedFormat, setSelectedFormat] = useState<MediaFormat | null>(null);
 
+  const filteredFormats = useMemo(
+    () => formats.filter((f) => f.type === mediaType),
+    [formats, mediaType],
+  );
 
+  function selectFormat(format: MediaFormat) {
+    setSelectedFormat(format);
+    onSelect({ format, audioFormat });
+  }
 
-export function FormatSelector({formats, onSelect}:FormatSelectorProps) {
-    const [mediaType, setMediaType] = useState<"video" | "audio">("video");
-    const filteredFormats = useMemo(
-        ()=> formats.filter((format)=> format.type === mediaType),
-        [formats, mediaType]
-    );
-
-    const [audioFormat, setAudioFormat] = useState<"original" | "mp3">("original");
-    const [selectedFormat, setSelectedFormat] =  useState<MediaFormat | null>(null);
-
-
-    function selectFormat(format: MediaFormat) {
-        setSelectedFormat(format);
-        onSelect({ format, audioFormat });
-    };
-
-
-    function changeAudioFormat(value: "original" | "mp3") {
-        setAudioFormat(value);
-        if (selectedFormat) {
-            onSelect({format: selectedFormat, audioFormat: value});
-        };
-    };
-
-
-    function changeMediaType(type: "video" | "audio") {
-        if (type === mediaType) {
-            return;
-        }
-        setMediaType(type);
-        setSelectedFormat(null);
-        onSelect(null);
+  function changeAudioFormat(value: "original" | "mp3") {
+    setAudioFormat(value);
+    if (selectedFormat) {
+      onSelect({ format: selectedFormat, audioFormat: value });
     }
+  }
 
-    return (
-        <section className="space-y-4 rounded-2xl border border-gray-200 bg-white p-5">
-            <div className="flex gap-2">
-                {(["video", "audio"] as const).map((type)=> (
-                <button
-                key={type}
-                type="button"
-                onClick={()=> changeMediaType(type)}
-                className={`rounded-lg px-4 py-2 font-medium capitalize ${
-                    mediaType === type
-                    ? "bg-black text-white"
-                    : "bg-gray-100 text-gray-700"
-                }`}
+  function changeMediaType(type: "video" | "audio") {
+    if (type === mediaType) return;
+    setMediaType(type);
+    setSelectedFormat(null);
+    onSelect(null);
+  }
+
+  return (
+    <section className="animate-fade-up space-y-5 rounded-2xl glass-card p-5">
+      {/* ── Type toggle ───────────────────────────────────────────── */}
+      <div
+        role="tablist"
+        aria-label="Media type"
+        className="inline-flex rounded-xl bg-slate-800/60 p-1 gap-1"
+      >
+        {(["video", "audio"] as const).map((type) => {
+          const Icon = type === "video" ? Film : Music;
+          const active = mediaType === type;
+          return (
+            <button
+              key={type}
+              role="tab"
+              type="button"
+              aria-selected={active}
+              onClick={() => changeMediaType(type)}
+              className={`
+                inline-flex items-center gap-2 rounded-lg px-4 py-2
+                text-sm font-semibold capitalize transition-all duration-200
+                focus-ring
+                ${
+                  active
+                    ? "bg-brand-600 text-white shadow-md shadow-brand-900/40"
+                    : "text-slate-400 hover:text-slate-200"
+                }
+              `}
+            >
+              <Icon size={14} aria-hidden="true" />
+              {type}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── Audio output selector ──────────────────────────────────── */}
+      {mediaType === "audio" && (
+        <fieldset className="space-y-2">
+          <legend className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">
+            Output format
+          </legend>
+          <div className="flex flex-wrap gap-3">
+            {(["original", "mp3"] as const).map((value) => {
+              const checked = audioFormat === value;
+              return (
+                <label
+                  key={value}
+                  className={`
+                    inline-flex cursor-pointer items-center gap-2.5 rounded-xl border px-4 py-2.5
+                    text-sm font-medium transition-all duration-200
+                    ${
+                      checked
+                        ? "border-brand-500 bg-brand-600/15 text-brand-300"
+                        : "border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200"
+                    }
+                  `}
                 >
-                    {type}
-                </button>
-                ))}
-            </div>
+                  <input
+                    type="radio"
+                    name="audioFormat"
+                    value={value}
+                    checked={checked}
+                    onChange={() => changeAudioFormat(value)}
+                    className="sr-only"
+                  />
+                  <span
+                    className={`
+                      flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2
+                      transition-colors duration-200
+                      ${checked ? "border-brand-500 bg-brand-500" : "border-slate-600"}
+                    `}
+                  >
+                    {checked && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                    )}
+                  </span>
+                  {value === "original" ? "Original" : "MP3"}
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
+      )}
 
-            {mediaType === "audio" && (
-                <fieldset className="space-y-2">
-                    <legend className="font-medium">
-                        Audio output
-                    </legend>
+      {/* ── Format grid ───────────────────────────────────────────── */}
+      {filteredFormats.length === 0 ? (
+        <p className="rounded-xl bg-slate-800/50 py-6 text-center text-sm text-slate-500">
+          No {mediaType} formats available
+        </p>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {filteredFormats.map((format) => {
+            const active = selectedFormat?.format_id === format.format_id;
+            return (
+              <button
+                key={format.format_id}
+                type="button"
+                onClick={() => selectFormat(format)}
+                className={`
+                  group relative rounded-xl border p-4 text-left
+                  transition-all duration-200 focus-ring
+                  ${
+                    active
+                      ? "border-brand-500 bg-brand-600/10 shadow-[0_0_0_1px_rgba(99,102,241,0.5)]"
+                      : "border-slate-700/60 bg-slate-800/30 hover:border-slate-600 hover:bg-slate-800/60"
+                  }
+                `}
+              >
+                {/* selected check */}
+                {active && (
+                  <CheckCircle2
+                    size={16}
+                    className="absolute right-3 top-3 text-brand-400"
+                    aria-hidden="true"
+                  />
+                )}
 
-                    <label className="flex items-center gap-2">
-                        <input 
-                        type="radio" 
-                        name="audioFormat"
-                        value="original"
-                        checked={audioFormat === "original"}
-                        onChange={()=> changeAudioFormat("original")}
-                        />
-                        Original audio
-                    </label>
-
-                    <label className="flex items-center gap-2">
-                        <input 
-                        type="radio" 
-                        name="audioFormat"
-                        value="mp3"
-                        checked={audioFormat === "mp3"}
-                        onChange={()=> changeAudioFormat("mp3")}
-                        />
-                        MP3
-                    </label>
-                </fieldset>
-            )}
-
-            {filteredFormats.length === 0 ? (
-                <p className="text-sm text-gray-500">
-                    No {mediaType} formats are available
+                <p
+                  className={`font-semibold text-sm ${
+                    active ? "text-brand-300" : "text-slate-200"
+                  }`}
+                >
+                  {format.resolution ?? "Audio"}
                 </p>
-            ): (
-                <div className="grid gap-3 sm:grid-cols-2">
-                    {filteredFormats.map((format) => (
-                        <button
-                        key={format.format_id}
-                        type="button"
-                        onClick={()=> selectFormat(format)}
-                        className={`rounded-xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                            selectedFormat?.format_id === format.format_id
-                            ? "border-blue-600 bg-blue-50 ring-1 ring-blue-600"
-                            : "border-gray-200 hover:border-gray-400"
-                        }`}>
-                            <div className="flex items-start justify-between gap-3">
-                                <div>
-                                    <p className="font-medium">
-                                        {format.resolution ?? "Audio"}
-                                    </p>
-                                    <p className="text-sm text-gray-500">
-                                        {format.extension.toUpperCase()}
-                                    </p>
-                                </div>
-                                
-                                {selectedFormat?.format_id === format.format_id && (
-                                    <span className="text-sm font-semibold text-blue-700">
-                                        Selected ✓
-                                    </span>
-                                )}
-                            </div>
-                    </button>
-                ))}
-            </div>
-            )} 
-        </section>
-    );
+
+                <p className="mt-0.5 text-xs text-slate-500 uppercase tracking-wide">
+                  {format.extension}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
 }
