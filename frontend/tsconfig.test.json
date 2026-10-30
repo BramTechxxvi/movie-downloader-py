@@ -5,6 +5,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false
   },
-  "include": ["tests", "src"],
+  "include": ["src/test", "src"],
   "exclude": []
 }

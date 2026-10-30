@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { analyzeMedia, startDownload } from '../api/mediaApi'
+import { Navbar } from '../components/Navbar'
 import { UrlInput } from '../components/UrlInput'
 import { MediaPreview } from '../components/MediaPreview'
 import { FormatSelector, type FormatSelection } from '../components/FormatSelector'
@@ -63,7 +64,7 @@ export function HomePage() {
     }
   }
 
-
+  
   function handleRetry() {
     setDownloadId(null)
     setError(null)
@@ -72,6 +73,8 @@ export function HomePage() {
 
   return (
     <div className="page-bg">
+      <Navbar />
+
       <main id="main-content" className="mx-auto max-w-3xl px-4 pb-20 pt-12 sm:px-6 sm:pt-16">
         <section className="mb-10 text-center sm:mb-12" aria-label="Introduction">
           <h1 className="mb-3 text-3xl font-extrabold tracking-tight text-slate-50 sm:text-4xl">
