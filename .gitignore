@@ -28,7 +28,7 @@ Thumbs.db
 #==================
 backend/.venv/
 backend/venv/
-
+backend/downloads/
 __pycache__/
 *.py[cod]
 *.pyo
