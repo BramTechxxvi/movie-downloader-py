@@ -9,7 +9,6 @@ class Settings(BaseSettings):
     download_dir: Path = Path("downloads")
     download_file_ttl_minutes: int = 30
     
-    
     model_config = SettingsConfigDict(
         env_file = ".env",
         extra="forbid"
